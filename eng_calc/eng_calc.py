@@ -27,13 +27,19 @@ def form_quick_acc(quick_acc_frame):
 
 
 def form_graph(graph_frame):
-    quick_acc_lbl = Tk.Label(master=graph_frame, text='Graph Area')
-    quick_acc_lbl.pack()
+    graph_area = Tk.Label(master=graph_frame, text='Graph Area')
+    graph_area.pack()
 
 
 def form_calc(calc_frame):
-    quick_acc_lbl = Tk.Text(master=calc_frame)
-    quick_acc_lbl.pack()
+    calc_text_area = Tk.Text(master=calc_frame)
+    calc_text_area.pack()
+    calc_text_area.bind('<Return>', on_calc_enter)
+
+
+def on_calc_enter(a):
+    print(a)
+    print('Enter pressed')
 
 
 home_window = Tk.Tk()
