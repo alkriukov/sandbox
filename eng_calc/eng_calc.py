@@ -40,15 +40,15 @@ def form_calc(calc_frame):
 def on_calc_enter(event):
     text = event.widget.get('1.0', Tk.INSERT).split('\n')[-1]
     result = ''
-    return_value = ''
+    # return_value = ''
     try:
         result = eval(text)
         if str(result) != str(text):
             event.widget.insert(Tk.INSERT, '\n' + str(result))
-            return_value = 'break'
+            # return_value = 'break'
     except (NameError, ValueError, SyntaxError) as e:
         print(e)
-    return return_value
+    # return return_value
 
 
 home_window = Tk.Tk()
