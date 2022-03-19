@@ -4,6 +4,10 @@
 *.o
 *.obj
 
+# Python compiled files
+__pycache__/
+*.py[cod]
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
