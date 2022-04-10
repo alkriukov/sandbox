@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  flask_notes:
+    build:
+      content: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: notes_on_flask
+      FLASK_ENV: development
+    command: flask run
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
