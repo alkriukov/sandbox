@@ -8,7 +8,7 @@ services:
     environment:
       FLASK_APP: notes_on_flask
       FLASK_ENV: development
-    command: flask run
+    command: flask run --host=0.0.0.0
     volumes:
       - .:/app
     ports:
