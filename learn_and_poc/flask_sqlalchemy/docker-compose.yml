@@ -3,7 +3,7 @@ version: "3.9"
 services:
   flask_notes:
     build:
-      content: .
+      context: .
       dockerfile: Dockerfile
     environment:
       FLASK_APP: notes_on_flask
