@@ -5,8 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      FLASK_ENV: development
     command: python notes_on_flask_run_prod.py
     volumes:
       - .:/app
