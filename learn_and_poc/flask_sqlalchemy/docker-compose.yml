@@ -22,3 +22,14 @@ services:
       - .:/app
     ports:
       - "8002:5000"
+
+  rabbitmq_service:
+    build:
+      context: .
+      dockerfile: ./rabbit/Dockerfile
+    command: ./init.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8003:5672"
+      - "8004:15672"
