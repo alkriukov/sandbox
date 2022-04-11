@@ -1,5 +1,7 @@
 FROM rabbitmq
 
 WORKDIR /app
-COPY . /app/
+COPY rabbit/ /app/
 RUN chmod +x init.sh
+
+CMD ./init.sh
