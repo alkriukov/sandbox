@@ -1,15 +1,26 @@
 version: "3.9"
 
 services:
+  flask_notes_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_ENV: development
+    command: python notes_on_flask_run_prod.py
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+
   flask_notes:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      FLASK_APP: notes_on_flask
       FLASK_ENV: development
-    command: flask run --host=0.0.0.0
+    command: python notes_on_flask.py
     volumes:
       - .:/app
     ports:
-      - "5000:5000"
+      - "8002:5000"

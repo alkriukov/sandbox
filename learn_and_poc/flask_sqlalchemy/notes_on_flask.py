@@ -53,3 +53,6 @@ def say_i_run_on_flask():
         notes_text.append(n.show())
     return '<p>' + '<br/>'.join(notes_text) + '</p>'
 
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0')
+
