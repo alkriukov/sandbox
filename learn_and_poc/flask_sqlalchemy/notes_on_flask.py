@@ -21,6 +21,8 @@ class Note(db.Model):
         return self.text
 
 def callback_add_note(ch, method, properties, body):
+    print('callback_add_note handled')
+    print(body)
     note_text = body
     new_note = Note(text=note_text)
     db.session.add(new_note)
@@ -28,6 +30,8 @@ def callback_add_note(ch, method, properties, body):
     return
 
 def callback_delete_note(ch, method, properties, body):
+    print('callback_delete_note handled')
+    print(body)
     note_text = body
     notes_deleted = []
     for note_to_del in Note.query.filter_by(text=note_text):
@@ -37,6 +41,7 @@ def callback_delete_note(ch, method, properties, body):
 
 amqp_conn_url = os.environ.get('FLASK_AMQP_URL')
 pika_params = pika.URLParameters(amqp_conn_url)
+pika_params.heartbeat = 0
 conn_attempts = 300
 while conn_attempts > 0:
     conn_attempts -= 1
@@ -76,9 +81,11 @@ def add_note():
     new_note = Note(text=note_text)
     db.session.add(new_note)
     db.session.commit()
+    sent_message = ''
     if this_is_prod:
         channel.basic_publish(exchange='', routing_key='add_note', body=note_text)
-    return '<p>' + note_text + ' - Added</p>'
+        sent_message = 'Sent add_note ' + str(note_text)
+    return '<p>' + note_text + ' - Added. ' + sent_message + '</p>'
 
 @app.route('/deleteNotes/')
 def delete_note():
@@ -88,9 +95,11 @@ def delete_note():
         notes_deleted.append(note_to_del.show())
         db.session.delete(note_to_del)
     db.session.commit()
+    sent_message = ''
     if this_is_prod:
         channel.basic_publish(exchange='', routing_key='delete_note', body=note_text)
-    return '<p>' + '<br/>'.join(notes_deleted) + ' - Deleted</p>'
+        sent_message = 'Sent delete_note ' + str(note_text)
+    return '<p>' + '<br/>'.join(notes_deleted) + ' - Deleted. ' + sent_message + '</p>'
 
 @app.route('/showAll/')
 def say_i_run_on_flask():
