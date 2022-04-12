@@ -75,7 +75,7 @@ def start_listen_prod():
     if this_is_prod:
         return_value = '<p>Nothing to do</p>'
     else:
-        threading.Thread(target=channel.start_consuming).start()
+        channel.start_consuming()
     return return_value
 
 @app.route('/initDb/')
