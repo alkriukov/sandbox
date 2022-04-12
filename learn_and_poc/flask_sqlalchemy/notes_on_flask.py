@@ -13,6 +13,28 @@ app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(255), unique=True, nullable=False)
+
+    def show(self):
+        return self.text
+
+def callback_add_note(ch, method, properties, body):
+    note_text = body
+    new_note = Note(text=note_text)
+    db.session.add(new_note)
+    db.session.commit()
+    return
+
+def callback_delete_note(ch, method, properties, body):
+    note_text = body
+    notes_deleted = []
+    for note_to_del in Note.query.filter_by(text=note_text):
+        notes_deleted.append(note_to_del.show())
+        db.session.delete(note_to_del)
+    db.session.commit()
+
 amqp_conn_url = os.environ.get('FLASK_AMQP_URL')
 pika_params = pika.URLParameters(amqp_conn_url)
 conn_attempts = 300
@@ -37,28 +59,6 @@ if flask_env and flask_env == 'development':
 else:
     channel.basic_consume(queue='add_note', auto_ack=True, on_message_callback=callback_add_note)
     channel.basic_consume(queue='delete_note', auto_ack=True, on_message_callback=callback_delete_note)
-
-class Note(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(255), unique=True, nullable=False)
-
-    def show(self):
-        return self.text
-
-def callback_add_note(ch, method, properties, body):
-    note_text = body
-    new_note = Note(text=note_text)
-    db.session.add(new_note)
-    db.session.commit()
-    return
-
-def callback_delete_note(ch, method, properties, body):
-    note_text = body
-    notes_deleted = []
-    for note_to_del in Note.query.filter_by(text=note_text):
-        notes_deleted.append(note_to_del.show())
-        db.session.delete(note_to_del)
-    db.session.commit()
 
 @app.route('/')
 def hello_world():
