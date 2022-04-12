@@ -1,5 +1,6 @@
 import os
 import pika
+import time
 
 from flask import Flask
 from flask import request
@@ -13,7 +14,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 pika_params = pika.URLParameters(os.environ.get('FLASK_AMQP_URL'))
-pika_conn = pika.BlockingConnection(pika_params)
+conn_attempts = 30
+while conn_attempts > 0:
+    conn_attempts -= 1
+    try:
+        pika_conn = pika.BlockingConnection(pika_params)
+    except pika.exceptions.AMQPConnectionError as e:
+        print('AMQPConnectionError. Attempts remaining: ' + str(conn_attempts))
+        time.sleep(5)
+
 channel = pika_conn.channel()
 channel.queue_declare(queue='add_note')
 channel.queue_declare(queue='delete_note')
