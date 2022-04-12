@@ -13,15 +13,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-pika_params = pika.URLParameters(os.environ.get('FLASK_AMQP_URL'))
-conn_attempts = 30
+amqp_conn_url = os.environ.get('FLASK_AMQP_URL')
+pika_params = pika.URLParameters(amqp_conn_url)
+conn_attempts = 300
 while conn_attempts > 0:
     conn_attempts -= 1
     try:
         pika_conn = pika.BlockingConnection(pika_params)
     except pika.exceptions.AMQPConnectionError as e:
+        print(amqp_conn_url)
         print('AMQPConnectionError. Attempts remaining: ' + str(conn_attempts))
-        time.sleep(5)
+        time.sleep(10)
 
 channel = pika_conn.channel()
 channel.queue_declare(queue='add_note')
