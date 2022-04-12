@@ -1,4 +1,6 @@
 import os
+import pika
+
 from flask import Flask
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
@@ -10,12 +12,41 @@ app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+pika_params = pika.URLParameters(os.environ.get('FLASK_AMQP_URL'))
+pika_conn = pika.BlockingConnection(pika_params)
+channel = pika_conn.channel()
+channel.queue_declare(queue='add_note')
+channel.queue_declare(queue='delete_note')
+
+this_is_prod = True
+flask_env = os.environ.get('FLASK_ENV')
+if flask_env and flask_env == 'development':
+    this_is_prod = False
+else:
+    channel.basic_consume(queue='add_note', auto_ack=True, on_message_callback=callback_add_note)
+    channel.basic_consume(queue='delete_note', auto_ack=True, on_message_callback=callback_delete_note)
+
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(255), unique=True, nullable=False)
 
     def show(self):
         return self.text
+
+def callback_add_note(ch, method, properties, body):
+    note_text = body
+    new_note = Note(text=note_text)
+    db.session.add(new_note)
+    db.session.commit()
+    return
+
+def callback_delete_note(ch, method, properties, body):
+    note_text = body
+    notes_deleted = []
+    for note_to_del in Note.query.filter_by(text=note_text):
+        notes_deleted.append(note_to_del.show())
+        db.session.delete(note_to_del)
+    db.session.commit()
 
 @app.route('/')
 def hello_world():
@@ -33,6 +64,8 @@ def add_note():
     new_note = Note(text=note_text)
     db.session.add(new_note)
     db.session.commit()
+    if this_is_prod:
+        channel.basic_publish(exchange='', routing_key='add_note', body=note_text)
     return '<p>' + note_text + ' - Added</p>'
 
 @app.route('/deleteNotes/')
@@ -43,6 +76,8 @@ def delete_note():
         notes_deleted.append(note_to_del.show())
         db.session.delete(note_to_del)
     db.session.commit()
+    if this_is_prod:
+        channel.basic_publish(exchange='', routing_key='delete_note', body=note_text)
     return '<p>' + '<br/>'.join(notes_deleted) + ' - Deleted</p>'
 
 @app.route('/showAll/')
@@ -54,5 +89,7 @@ def say_i_run_on_flask():
     return '<p>' + '<br/>'.join(notes_text) + '</p>'
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    flask_env = os.environ.get('FLASK_ENV')
+    if flask_env and flask_env == 'development':
+        app.run(debug=True, host='0.0.0.0')
 
