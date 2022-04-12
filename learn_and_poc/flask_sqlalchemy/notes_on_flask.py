@@ -64,6 +64,7 @@ if flask_env and flask_env == 'development':
 else:
     channel.basic_consume(queue='add_note', auto_ack=True, on_message_callback=callback_add_note)
     channel.basic_consume(queue='delete_note', auto_ack=True, on_message_callback=callback_delete_note)
+    channel.start_consuming()
 
 @app.route('/')
 def hello_world():
@@ -81,11 +82,9 @@ def add_note():
     new_note = Note(text=note_text)
     db.session.add(new_note)
     db.session.commit()
-    sent_message = ''
     if this_is_prod:
         channel.basic_publish(exchange='', routing_key='add_note', body=note_text)
-        sent_message = 'Sent add_note ' + str(note_text)
-    return '<p>' + note_text + ' - Added. ' + sent_message + '</p>'
+    return '<p>' + note_text + ' - Added</p>'
 
 @app.route('/deleteNotes/')
 def delete_note():
@@ -95,11 +94,9 @@ def delete_note():
         notes_deleted.append(note_to_del.show())
         db.session.delete(note_to_del)
     db.session.commit()
-    sent_message = ''
     if this_is_prod:
         channel.basic_publish(exchange='', routing_key='delete_note', body=note_text)
-        sent_message = 'Sent delete_note ' + str(note_text)
-    return '<p>' + '<br/>'.join(notes_deleted) + ' - Deleted. ' + sent_message + '</p>'
+    return '<p>' + '<br/>'.join(notes_deleted) + ' - Deleted</p>'
 
 @app.route('/showAll/')
 def say_i_run_on_flask():
