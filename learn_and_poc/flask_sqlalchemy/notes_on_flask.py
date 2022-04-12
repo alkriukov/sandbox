@@ -71,6 +71,14 @@ def hello_world():
     show_api = ['initDb', 'showAll', 'addNote text', 'deleteNotes text']    
     return '<p>API:<br/>' + '<br/>'.join(show_api) + '</p>'
 
+@app.route('/listenToProd/')
+def start_listen_to_prod():
+    return_value = '<p>Nothing to do</p>'
+    if not this_is_prod:
+        return_value = '<p>Listening</p>'
+        channel.start_consuming()
+    return return_value
+
 @app.route('/initDb/')
 def init_db():
     db.create_all()
@@ -112,5 +120,5 @@ if __name__ == "__main__":
         serve(notes_on_flask.app, host='0.0.0.0', port=8001)
     else:        
         app.run(debug=True, host='0.0.0.0')
-        channel.start_consuming()
+
 
