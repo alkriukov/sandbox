@@ -6,6 +6,8 @@ from flask import Flask
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
 
+from waitress import serve
+
 db_path = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'flask_db.db')
 
 app = Flask(__name__)
@@ -61,10 +63,8 @@ this_is_prod = True
 flask_env = os.environ.get('FLASK_ENV')
 if flask_env and flask_env == 'development':
     this_is_prod = False
-else:
     channel.basic_consume(queue='add_note', auto_ack=True, on_message_callback=callback_add_note)
     channel.basic_consume(queue='delete_note', auto_ack=True, on_message_callback=callback_delete_note)
-    channel.start_consuming()
 
 @app.route('/')
 def hello_world():
@@ -107,7 +107,10 @@ def say_i_run_on_flask():
     return '<p>' + '<br/>'.join(notes_text) + '</p>'
 
 if __name__ == "__main__":
-    flask_env = os.environ.get('FLASK_ENV')
-    if flask_env and flask_env == 'development':
+    
+    if this_is_prod:
+        serve(notes_on_flask.app, host='0.0.0.0', port=8001)
+    else:        
         app.run(debug=True, host='0.0.0.0')
+        channel.start_consuming()
 
