@@ -1,6 +1,4 @@
-import os
-import pika
-import time
+import os, pika, time, threading
 
 from flask import Flask
 from flask import request
@@ -71,12 +69,13 @@ def hello_world():
     show_api = ['initDb', 'showAll', 'addNote text', 'deleteNotes text']    
     return '<p>API:<br/>' + '<br/>'.join(show_api) + '</p>'
 
-@app.route('/listenToProd/')
-def start_listen_to_prod():
-    return_value = '<p>Nothing to do</p>'
-    if not this_is_prod:
-        return_value = '<p>Listening</p>'
-        channel.start_consuming()
+@app.route('/listenProd/')
+def start_listen_prod():
+    return_value = '<p>Listening</p>'
+    if this_is_prod:
+        return_value = '<p>Nothing to do</p>'
+    else:
+        threading.Thread(target=channel.start_consuming).start()
     return return_value
 
 @app.route('/initDb/')
@@ -115,9 +114,8 @@ def say_i_run_on_flask():
     return '<p>' + '<br/>'.join(notes_text) + '</p>'
 
 if __name__ == "__main__":
-    
     if this_is_prod:
-        serve(notes_on_flask.app, host='0.0.0.0', port=8001)
+        serve(app, host='0.0.0.0', port=8001)
     else:        
         app.run(debug=True, host='0.0.0.0')
 
