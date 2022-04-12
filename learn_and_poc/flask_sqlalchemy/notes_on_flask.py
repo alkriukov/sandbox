@@ -20,6 +20,7 @@ while conn_attempts > 0:
     conn_attempts -= 1
     try:
         pika_conn = pika.BlockingConnection(pika_params)
+        conn_attempts = 0
     except pika.exceptions.AMQPConnectionError as e:
         print(amqp_conn_url)
         print('AMQPConnectionError. Attempts remaining: ' + str(conn_attempts))

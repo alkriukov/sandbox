@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     environment:
       FLASK_ENV: production
-      FLASK_AMQP_URL: amqp://put_user:put_password@rabbitmq:5672/%2F
+      FLASK_AMQP_URL: amqp://put_prod_user:put_prod_password@rabbitmq:5672/%2F
     command: python notes_on_flask_run_prod.py
     ports:
       - "8001:8001"
@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     environment:
       FLASK_ENV: development
-      FLASK_AMQP_URL: amqp://put_user:put_password@rabbitmq:5672/%2F
+      FLASK_AMQP_URL: amqp://put_dev_user:put_dev_password@rabbitmq:5672/%2F
     command: python notes_on_flask.py
     ports:
       - "8002:5000"
