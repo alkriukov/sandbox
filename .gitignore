@@ -1,4 +1,5 @@
 # Databases
+*.sqlite3
 *.db
 
 # Compiled Object files
