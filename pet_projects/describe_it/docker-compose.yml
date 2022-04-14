@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  
+  backend_main:
+    build:
+      context: .
+      dockerfile: ./backend_main/Dockerfile
+    environment:
+      FLASK_ENV: development
+      FLASK_AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      POSTGRES_DB: db_main
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST: db_main
+      POSTGRES_PORT: 5432
+    command: 'python backend_main.py'
+    ports:
+      - "8001:5000"
+    depends_on:
+      - db_main
+      - rabbit
+
+  consumer_main:
+    build:
+      context: .
+      dockerfile: ./backend_main/Dockerfile
+    environment:
+      POSTGRES_DB: main
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST: db_main
+      POSTGRES_PORT: 5432
+    command: 'python consumer.py'
+    depends_on:
+      - db_main
+      - rabbit
+
+  db_main:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: db_main
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    posts:
+      - 5432:5432
+    volumes:
+      - ./db_main:/var/lib/postgresql/data
+
+  rabbit:
+    build:
+      context: .
+      dockerfile: ./rabbit/Dockerfile
+    ports:
+      - "8003:5672"
+      - "8004:15672"
