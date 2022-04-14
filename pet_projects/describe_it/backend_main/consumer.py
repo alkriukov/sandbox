@@ -6,7 +6,7 @@ def callback_hello(ch, method, properties, body):
 
 amqp_conn_url = os.environ.get('FLASK_AMQP_URL')
 if not amqp_conn_url:
-    amqp_conn_url='amqp://put_user:put_password@localhost:8003/%2F'
+    amqp_conn_url='amqp://put_user:put_password@localhost:18003/%2F'
 
 pika_params = pika.URLParameters(amqp_conn_url)
 pika_params.heartbeat = 0

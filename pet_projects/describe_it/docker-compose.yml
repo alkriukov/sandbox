@@ -38,12 +38,11 @@ services:
 
   db_main:
     image: postgres
-    restart: always
     environment:
       POSTGRES_DB: db_main
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-    posts:
+    ports:
       - 5432:5432
     volumes:
       - ./db_main:/var/lib/postgresql/data
