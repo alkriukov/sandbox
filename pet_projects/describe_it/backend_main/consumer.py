@@ -4,7 +4,7 @@ import queue
 def callback_hello(ch, method, properties, body):
     print('Callback hello')
 
-amqp_conn_url = os.environ.get('FLASK_AMQP_URL')
+amqp_conn_url = os.environ.get('AMQP_URL')
 if not amqp_conn_url:
     amqp_conn_url='amqp://put_user:put_password@localhost:18003/%2F'
 
