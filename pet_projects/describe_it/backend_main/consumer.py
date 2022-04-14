@@ -1,4 +1,4 @@
-import os, pika
+import os, pika, time
 import queue
 
 def callback_hello(ch, method, properties, body):
@@ -10,7 +10,16 @@ if not amqp_conn_url:
 
 pika_params = pika.URLParameters(amqp_conn_url)
 pika_params.heartbeat = 0
-pika_conn = pika.BlockingConnection(pika_params)
+conn_attempts = 30
+while conn_attempts > 0:
+    conn_attempts -= 1
+    try:
+        pika_conn = pika.BlockingConnection(pika_params)
+        conn_attempts = 0
+    except pika.exceptions.AMQPConnectionError as e:
+        print(amqp_conn_url)
+        print('AMQPConnectionError. Attempts remaining: ' + str(conn_attempts))
+        time.sleep(10)
 ch = pika_conn.channel()
 
 ch.queue_declare(queue='hello')
