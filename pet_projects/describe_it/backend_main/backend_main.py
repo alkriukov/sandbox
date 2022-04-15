@@ -49,7 +49,7 @@ def showTags():
         tags_to_show.append(str(t.text))
     return '<p>' + '<br/>'.join(tags_to_show) + '</p>'
 
-@app.route('/api/tag/<tagname>', methods='PUT')
+@app.route('/api/tag/<tagname>', methods=['PUT'])
 def addTag(tagname):
     new_tag = Tag(text=tagname)
     db.session.add(new_tag)
