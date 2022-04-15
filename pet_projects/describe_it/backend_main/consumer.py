@@ -1,5 +1,4 @@
 import os, pika, time
-import queue
 
 def callback_hello(ch, method, properties, body):
     print('Callback hello')

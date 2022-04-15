@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from waitress import serve
 
-db_path = 'postgresql://root:root@db_main:5432/main'
+db_path = 'mysql://root:root@db_main:5432/main'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path

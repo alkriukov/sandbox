@@ -9,11 +9,11 @@ services:
     environment:
       FLASK_ENV: development
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
-      POSTGRES_DB: db_main
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_HOST: db_main
-      POSTGRES_PORT: 5432
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: db_main
+      MYSQL_PORT: 3306
     command: 'python backend_main.py'
     ports:
       - "8001:5000"
@@ -27,26 +27,27 @@ services:
       dockerfile: ./backend_main/Dockerfile
     environment:
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
-      POSTGRES_DB: db_main
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_HOST: db_main
-      POSTGRES_PORT: 5432
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: db_main
+      MYSQL_PORT: 3306
     command: 'python consumer.py'
     depends_on:
       - db_main
       - rabbit
 
   db_main:
-    image: postgres
+    image: mysql
+    restart: always
     environment:
-      POSTGRES_DB: db_main
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     ports:
-      - 5432:5432
+      - 3306:3306
     volumes:
-      - /var/lib/describe_it/db_main:/var/lib/postgresql/data
+      - ./db_main:/var/lib/mysql
 
   rabbit:
     build:
