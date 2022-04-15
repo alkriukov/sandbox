@@ -27,7 +27,7 @@ services:
       dockerfile: ./backend_main/Dockerfile
     environment:
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
-      POSTGRES_DB: main
+      POSTGRES_DB: db_main
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_HOST: db_main
@@ -46,7 +46,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./db_main:/var/lib/postgresql/data
+      - /var/lib/describe_it/db_main:/var/lib/postgresql/data
 
   rabbit:
     build:
