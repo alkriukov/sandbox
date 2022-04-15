@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  
+  backend_main:
+    build:
+      context: .
+      dockerfile: ./backend_main/Dockerfile
+    environment:
+      FLASK_ENV: development
+      AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: db_main
+      MYSQL_PORT: 3306
+    command: 'python backend_main.py'
+    ports:
+      - "8001:5000"
+    depends_on:
+      - db_main
+      - rabbit
+
+  consumer_main:
+    build:
+      context: .
+      dockerfile: ./backend_main/Dockerfile
+    environment:
+      AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: db_main
+      MYSQL_PORT: 3306
+    command: 'python consumer.py'
+    depends_on:
+      - db_main
+      - rabbit
+
+  db_main:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_main
+      MYSQL_USER: main
+      MYSQL_PASSWORD: main
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    volumes:
+      - /var/lib/describe_it/db_main:/var/lib/mysql
+
+  rabbit:
+    build:
+      context: .
+      dockerfile: ./rabbit/Dockerfile
+    ports:
+      - "8003:5672"
+      - "8004:15672"
