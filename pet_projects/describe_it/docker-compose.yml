@@ -42,12 +42,13 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: db_main
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_USER: main
+      MYSQL_PASSWORD: main
+      MYSQL_ROOT_PASSWORD: root
     ports:
       - 3306:3306
     volumes:
-      - ./db_main:/var/lib/mysql
+      - /var/lib/describe_it/db_main:/var/lib/mysql
 
   rabbit:
     build:
