@@ -162,13 +162,13 @@ def vote(base_tag_text, vote_tag_text, up_or_down):
                 VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=1))
     db.session.commit()
 
-@app.route('/api/vote/up', methods=['PUT', 'POST'])
+@app.route('/api/vote/up', methods=['PUT'])
 def voteUp():
     json_body = json.loads(request.get_data())
     vote(json_body['base'], json_body['vote'], 'up')
     return 'Vote Up'
 
-@app.route('/api/vote/down', methods=['PUT', 'POST'])
+@app.route('/api/vote/down', methods=['PUT'])
 def voteDown():
     json_body = json.loads(request.get_data())
     vote(json_body['base'], json_body['vote'], 'down')
