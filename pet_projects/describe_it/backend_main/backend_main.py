@@ -67,7 +67,15 @@ class IncorrectVotesValue(Exception):
 
 @app.route('/')
 def index():
-    return '<p>Hello</p>'
+    testing = ['API:',
+        '/api/tags/- GET',
+        '/api/votes/ - GET POST',
+        '/api/tag/<tagname>/ - GET PUT POST DELETE',
+        '/api/connection/ - GET PUT DELETE',
+        '/api/vote/up/ - PUT',
+        '/api/vote/down/ - PUT',
+        ]
+    return 'Hello'
 
 
 @app.route('/api/tags/', methods=['GET'])
@@ -138,7 +146,7 @@ def setVotes():
             return_resp = 'Unsupported request method'
     except json.decoder.JSONDecodeError as e:
         return_resp = Response(response='Cannot load json from ' + str(request.get_data()), status=400)
-    except IncorrectVotesValue:
+    except IncorrectVotesValue as e:
         return_resp = Response(response=str(e.__class__.__name__) + ' ' + str(e), status=400)
     except TagNotFoundException as e:            
         return_resp = Response(response=str(e.__class__.__name__) + ' ' + str(e), status=400)
