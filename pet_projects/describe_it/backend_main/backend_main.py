@@ -71,7 +71,15 @@ def showTags():
 
 @app.route('/api/votes/', methods=['GET'])
 def showVotes():
-    return 'Hello'
+    current_votes = VoteConnect.query.all()
+    votes_to_show = []
+    for c in current_votes:
+        base_name = str(Tag.query.get(c.base_id).text)
+        vote_name = str(Tag.query.get(c.vote_id).text)
+        upvotes = str(c.upvotes)
+        downvotes = str(c.downvotes)
+        votes_to_show.append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
+    return '\n'.join(votes_to_show)
 
 
 @app.route('/api/tag/<tagname>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
@@ -120,10 +128,10 @@ def changeConnection():
         current_conn = TagConnect.query.all()
         conn_to_show = []
         for c in current_conn:
-            base_tag_name = Tag.query.get(c.base_id)
-            next_tag_name = Tag.query.get(c.next_id)
-            conn_to_show.append(str(base_tag_name) + '>' + str(next_tag_name))
-        resp_text = ' '.join(conn_to_show)
+            base_name = str(Tag.query.get(c.base_id).text)
+            next_name = str(Tag.query.get(c.next_id).text)
+            conn_to_show.append(base_name + ' > ' + next_name)
+        resp_text = '\n'.join(conn_to_show)
     elif request.method == 'PUT':
         json_body = json.loads(request.get_data())
         base_tag = Tag.query.filter_by(text=json_body['base']).first()
