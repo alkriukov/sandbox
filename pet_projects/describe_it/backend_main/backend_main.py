@@ -69,17 +69,55 @@ def showTags():
         tags_to_show.append(str(t.text))
     return ' '.join(tags_to_show)
 
-@app.route('/api/votes/', methods=['GET'])
+@app.route('/api/votes/', methods=['GET', 'POST'])
 def showVotes():
-    current_votes = VoteConnect.query.all()
-    votes_to_show = []
-    for c in current_votes:
-        base_name = str(Tag.query.get(c.base_id).text)
-        vote_name = str(Tag.query.get(c.vote_id).text)
-        upvotes = str(c.upvotes)
-        downvotes = str(c.downvotes)
-        votes_to_show.append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
-    return '\n'.join(votes_to_show)
+    resp_text = ''
+    if request.method == 'GET':
+        current_votes = VoteConnect.query.all()
+        votes_to_show = []
+        for c in current_votes:
+            base_name = str(Tag.query.get(c.base_id).text)
+            vote_name = str(Tag.query.get(c.vote_id).text)
+            upvotes = str(c.upvotes)
+            downvotes = str(c.downvotes)
+            votes_to_show.append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
+        resp_text = '\n'.join(votes_to_show)
+    elif request.method == 'POST':
+        json_body = json.loads(request.get_data())
+        base_tag = Tag.query.filter_by(text=json_body['base']).first()
+        vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
+        up_or_down = json_body['up_or_down']
+        votes = json_body['votes']
+        con_to_vote = VoteConnect.query.filter(
+            and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
+        if up_or_down == 'up':
+            con_to_vote.upvotes = votes
+        elif up_or_down == 'down':
+            con_to_vote.downvotes = votes
+        db.session.commit()
+        base_name = str(Tag.query.get(con_to_vote.base_id).text)
+        vote_name = str(Tag.query.get(con_to_vote.vote_id).text)
+        upvotes = str(con_to_vote.upvotes)
+        downvotes = str(con_to_vote.downvotes)
+        resp_text = append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
+    else:
+        resp_text = 'Unsupported request method'
+    return resp_text
+
+@app.route('/api/vote/set/', methods=['POST'])
+def setVotes():
+    json_body = json.loads(request.get_data())
+    base_tag = Tag.query.filter_by(text=json_body['base']).first()
+    vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
+    up_or_down = json_body['up_or_down']
+    votes = json_body['votes']
+    con_to_vote = VoteConnect.query.filter(
+        and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
+    if up_or_down == 'up':
+        con_to_vote.upvotes = votes
+    elif up_or_down == 'down':
+        con_to_vote.downvotes = votes
+    db.session.commit()
 
 
 @app.route('/api/tag/<tagname>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
@@ -172,32 +210,17 @@ def vote(base_tag_text, vote_tag_text, up_or_down):
                 VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=1))
     db.session.commit()
 
-@app.route('/api/vote/up', methods=['PUT'])
+@app.route('/api/vote/up/', methods=['PUT'])
 def voteUp():
     json_body = json.loads(request.get_data())
     vote(json_body['base'], json_body['vote'], 'up')
     return 'Vote Up'
 
-@app.route('/api/vote/down', methods=['PUT'])
+@app.route('/api/vote/down/', methods=['PUT'])
 def voteDown():
     json_body = json.loads(request.get_data())
     vote(json_body['base'], json_body['vote'], 'down')
     return 'Vote Down'
-
-@app.route('/api/vote/down', methods=['POST'])
-def setVotes():
-    json_body = json.loads(request.get_data())
-    base_tag = Tag.query.filter_by(text=json_body['base']).first()
-    vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
-    up_or_down = json_body['up_or_down']
-    votes = json_body['votes']
-    con_to_vote = VoteConnect.query.filter(
-        and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
-    if up_or_down == 'up':
-        con_to_vote.upvotes = votes
-    elif up_or_down == 'down':
-        con_to_vote.downvotes = votes
-    db.session.commit()
 
 
 if __name__ == "__main__":
