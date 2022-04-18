@@ -67,7 +67,7 @@ def showTags():
         tags_to_show.append(str(t.text))
     return ' '.join(tags_to_show)
 
-@app.route('/api/votes/', method=['GET'])
+@app.route('/api/votes/', methods=['GET'])
 def showVotes():
     return 'Hello'
 

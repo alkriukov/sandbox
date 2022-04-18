@@ -49,6 +49,7 @@ services:
       - 3306:3306
     volumes:
       - /var/lib/describe_it/db_main:/var/lib/mysql
+    mem_limit: 512m
 
   rabbit:
     build:
