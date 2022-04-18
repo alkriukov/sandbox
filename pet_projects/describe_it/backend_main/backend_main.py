@@ -1,6 +1,8 @@
+from distutils import errors
+from email.mime import base
 import os, pika, time, json
 
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import UniqueConstraint, or_, and_
@@ -56,6 +58,10 @@ if flask_env and flask_env == 'development':
     this_is_prod = False
 
 
+class TagNotFoundException(Exception):
+    pass
+
+
 @app.route('/')
 def index():
     return '<p>Hello</p>'
@@ -70,8 +76,8 @@ def showTags():
     return ' '.join(tags_to_show)
 
 @app.route('/api/votes/', methods=['GET', 'POST'])
-def showVotes():
-    resp_text = ''
+def setVotes():
+    return_resp = ''
     if request.method == 'GET':
         current_votes = VoteConnect.query.all()
         votes_to_show = []
@@ -81,48 +87,61 @@ def showVotes():
             upvotes = str(c.upvotes)
             downvotes = str(c.downvotes)
             votes_to_show.append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
-        resp_text = '\n'.join(votes_to_show)
+        return_resp = '\n'.join(votes_to_show)
     elif request.method == 'POST':
-        json_body = json.loads(request.get_data())
-        base_tag = Tag.query.filter_by(text=json_body['base']).first()
-        vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
-        up_or_down = json_body['up_or_down']
-        votes = json_body['votes']
-        con_to_vote = VoteConnect.query.filter(
-            and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
-        if up_or_down == 'up':
-            con_to_vote.upvotes = votes
-        elif up_or_down == 'down':
-            con_to_vote.downvotes = votes
-        db.session.commit()
-        base_name = str(Tag.query.get(con_to_vote.base_id).text)
-        vote_name = str(Tag.query.get(con_to_vote.vote_id).text)
-        upvotes = str(con_to_vote.upvotes)
-        downvotes = str(con_to_vote.downvotes)
-        resp_text = append(base_name + ' > ' + vote_name + ': ^' + upvotes + ' v' + downvotes)
+        try:
+            json_body = json.loads(request.get_data())
+            base_tag = Tag.query.filter_by(text=json_body['base']).first()
+            if not base_tag:
+                raise TagNotFoundException(str(json_body['base']) + ' not found')
+            vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
+            if not vote_tag:
+                raise TagNotFoundException(str(json_body['vote']) + ' not found')
+            up_or_down = json_body['up_or_down']
+            votes = json_body['votes']
+            con_to_vote = VoteConnect.query.filter(
+                and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
+            if con_to_vote:
+                if up_or_down == 'up':
+                    con_to_vote.upvotes = votes
+                elif up_or_down == 'down':
+                    con_to_vote.downvotes = votes
+            else:
+                if up_or_down == 'up':
+                    db.session.add(
+                        VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=votes, downvotes=0))
+                else:
+                    db.session.add(
+                        VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=votes))
+            db.session.commit()
+            base_name = str(Tag.query.get(con_to_vote.base_id).text)
+            vote_name = str(Tag.query.get(con_to_vote.vote_id).text)
+            upvotes = str(con_to_vote.upvotes)
+            downvotes = str(con_to_vote.downvotes)
+            return_resp = base_name + ' > ' + vote_name + ' +' + upvotes + ' -' + downvotes
+        except json.decoder.JSONDecodeError as e:
+            return_resp = Response(
+                response='Cannot load json from ' + str(request.get_data()),
+                status=400)
+        except KeyError:
+            return_resp = Response(
+                response=str(json.loads(request.get_data())) + ' should have "base" and "vote" keys',
+                status=400)
+        except TagNotFoundException as e:            
+            return_resp = Response(
+                response=str(e.__class__.__name__) + ' ' + str(e),
+                status=400)
+        except Exception as e:
+            return_resp = Response(
+                response='Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e),
+                status=500)
     else:
-        resp_text = 'Unsupported request method'
-    return resp_text
-
-@app.route('/api/vote/set/', methods=['POST'])
-def setVotes():
-    json_body = json.loads(request.get_data())
-    base_tag = Tag.query.filter_by(text=json_body['base']).first()
-    vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
-    up_or_down = json_body['up_or_down']
-    votes = json_body['votes']
-    con_to_vote = VoteConnect.query.filter(
-        and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
-    if up_or_down == 'up':
-        con_to_vote.upvotes = votes
-    elif up_or_down == 'down':
-        con_to_vote.downvotes = votes
-    db.session.commit()
-
+        return_resp = 'Unsupported request method'
+    return return_resp
 
 @app.route('/api/tag/<tagname>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
-def changeTag(tagname):
-    resp_text = ''
+def changeTags(tagname):
+    return_resp = ''
     if request.method == 'GET':
         tags = [ Tag.query.filter_by(text=tagname).first() ]
         tag_names = [ tagname ]
@@ -131,17 +150,17 @@ def changeTag(tagname):
                 new_tag = Tag.query.get(tag_connection.next_id)
                 tags.append(new_tag)
                 tag_names.append(new_tag.text)
-        resp_text = ' '.join(tag_names)
+        return_resp = ' '.join(tag_names)
     elif request.method == 'PUT':
         db.session.add(Tag(text=tagname))
         db.session.commit()
-        resp_text = str(tagname) + ' added'
+        return_resp = str(tagname) + ' added'
     elif request.method == 'POST':
         json_body = json.loads(request.get_data())
         new_text = str(json_body['text'])
         db.session.query(Tag).filter_by(text=tagname).update({'text': new_text})
         db.session.commit()
-        resp_text = str(tagname) + ' > ' + str(new_text)
+        return_resp = str(tagname) + ' > ' + str(new_text)
     elif request.method == 'DELETE':
         tag_to_del = Tag.query.filter_by(text=tagname).first()
         con_to_del = TagConnect.query.filter(
@@ -154,14 +173,14 @@ def changeTag(tagname):
             db.session.delete(v)
         db.session.delete(tag_to_del)
         db.session.commit()
-        resp_text = str(tagname) + ' deleted'
+        return_resp = str(tagname) + ' deleted'
     else:
-        resp_text = 'Unsupported request method'
-    return resp_text
+        return_resp = 'Unsupported request method'
+    return return_resp
 
 @app.route('/api/connection/', methods=['GET', 'PUT', 'DELETE'])
-def changeConnection():
-    resp_text = ''
+def changeConnections():
+    return_resp = ''
     if request.method == 'GET':
         current_conn = TagConnect.query.all()
         conn_to_show = []
@@ -169,14 +188,14 @@ def changeConnection():
             base_name = str(Tag.query.get(c.base_id).text)
             next_name = str(Tag.query.get(c.next_id).text)
             conn_to_show.append(base_name + ' > ' + next_name)
-        resp_text = '\n'.join(conn_to_show)
+        return_resp = '\n'.join(conn_to_show)
     elif request.method == 'PUT':
         json_body = json.loads(request.get_data())
         base_tag = Tag.query.filter_by(text=json_body['base']).first()
         next_tag = Tag.query.filter_by(text=json_body['next']).first()
         db.session.add(TagConnect(base_id=base_tag.id, next_id=next_tag.id))
         db.session.commit()
-        resp_text = str(base_tag.text) + ' > ' + str(next_tag.text)
+        return_resp = str(base_tag.text) + ' > ' + str(next_tag.text)
     elif request.method == 'DELETE':
         json_body = json.loads(request.get_data())
         base_tag = Tag.query.filter_by(text=json_body['base']).first()
@@ -186,10 +205,10 @@ def changeConnection():
         for c in con_to_del:
             db.session.delete(c)
         db.session.commit()
-        resp_text = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
+        return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
     else:
-        resp_text = 'Unsupported request method'
-    return resp_text
+        return_resp = 'Unsupported request method'
+    return return_resp
 
 def vote(base_tag_text, vote_tag_text, up_or_down):
     base_tag = Tag.query.filter_by(text=base_tag_text).first()
