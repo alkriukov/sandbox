@@ -159,13 +159,17 @@ def changeTags(tagname):
     return_resp = ''
     try:
         if request.method == 'GET':
-            tags = [ Tag.query.filter_by(text=tagname).first() ]
+            requested_tag_in_db = Tag.query.filter_by(text=tagname).first()
             tag_names = [ tagname ]
-            for tag in tags:
-                for tag_connection in TagConnect.query.filter_by(base_id=tag.id):
-                    new_tag = Tag.query.get(tag_connection.next_id)
-                    tags.append(new_tag)
-                    tag_names.append(new_tag.text)
+            if requested_tag_in_db:
+                print('requested tag in db')
+                tags = [ requested_tag_in_db ]
+                for tag in tags:
+                    for tag_connection in TagConnect.query.filter_by(base_id=tag.id):
+                        new_tag = Tag.query.get(tag_connection.next_id)
+                        if new_tag.text not in tag_names:
+                            tag_names.append(new_tag.text)
+                            tags.append(new_tag)
             return_resp = ' '.join(tag_names)
         elif request.method == 'PUT':
             tag_exists_already = db.session.query(Tag).filter_by(text=tagname).first()
@@ -227,7 +231,7 @@ def changeConnections():
                 if not next_tag:
                     raise TagNotFoundException(str(json_body['next']) + ' not found')
                 con_exists_already = TagConnect.query.filter(
-                    and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id))
+                    and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id)).first()
                 if con_exists_already:
                     return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' already exists'
                 else:
@@ -239,20 +243,29 @@ def changeConnections():
                     ' should have "base" and "next" keys',
                     status=400)
         elif request.method == 'DELETE':
-            json_body = json.loads(request.get_data())
-            base_tag = Tag.query.filter_by(text=json_body['base']).first()
-            next_tag = Tag.query.filter_by(text=json_body['next']).first()
-            con_to_del = TagConnect.query.filter(
-                and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id))
-            record_deleted = False
-            for c in con_to_del:
-                db.session.delete(c)
-                record_deleted = True
-            if record_deleted:
-                db.session.commit()
-                return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
-            else:
-                return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' not found'
+            try:
+                json_body = json.loads(request.get_data())
+                base_tag = Tag.query.filter_by(text=json_body['base']).first()
+                if not base_tag:
+                    raise TagNotFoundException(str(json_body['base']) + ' not found')
+                next_tag = Tag.query.filter_by(text=json_body['next']).first()
+                if not next_tag:
+                    raise TagNotFoundException(str(json_body['next']) + ' not found')
+                con_to_del = TagConnect.query.filter(
+                    and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id))
+                record_deleted = False
+                for c in con_to_del:
+                    db.session.delete(c)
+                    record_deleted = True
+                if record_deleted:
+                    db.session.commit()
+                    return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
+                else:
+                    return_resp = str(base_tag.text) + ' > ' + str(next_tag.text) + ' not found'
+            except KeyError as e:
+                return_resp = Response(response=str(json.loads(request.get_data())) + \
+                    ' should have "base" and "next" keys',
+                    status=400)
         else:
             return_resp = 'Unsupported request method'
     except json.decoder.JSONDecodeError as e:
