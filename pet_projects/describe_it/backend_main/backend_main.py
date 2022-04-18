@@ -98,7 +98,7 @@ def setVotes():
             if not vote_tag:
                 raise TagNotFoundException(str(json_body['vote']) + ' not found')
             up_or_down = json_body['up_or_down']
-            votes = json_body['votes']
+            votes = int(json_body['votes'])
             con_to_vote = VoteConnect.query.filter(
                 and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
             if con_to_vote:
@@ -108,11 +108,10 @@ def setVotes():
                     con_to_vote.downvotes = votes
             else:
                 if up_or_down == 'up':
-                    db.session.add(
-                        VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=votes, downvotes=0))
+                    con_to_vote = VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=votes, downvotes=0)
                 else:
-                    db.session.add(
-                        VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=votes))
+                    con_to_vote = VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=votes)
+                db.session.add(con_to_vote)
             db.session.commit()
             base_name = str(Tag.query.get(con_to_vote.base_id).text)
             vote_name = str(Tag.query.get(con_to_vote.vote_id).text)
@@ -125,7 +124,8 @@ def setVotes():
                 status=400)
         except KeyError:
             return_resp = Response(
-                response=str(json.loads(request.get_data())) + ' should have "base" and "vote" keys',
+                response=str(json.loads(request.get_data())) + \
+                    ' should have "base", "vote", "up_or_down" and "votes" keys',
                 status=400)
         except TagNotFoundException as e:            
             return_resp = Response(
