@@ -31,7 +31,7 @@ services:
     ports:
       - "8002:5000"
     depends_on:
-      - db_main
+      - db_user
       - rabbit
 
   consumer_main:
@@ -57,7 +57,7 @@ services:
       DB_PATH: 'mysql://user:user@db_user:3307/db_user'
     command: 'python consumer.py'
     depends_on:
-      - db_main
+      - db_user
       - rabbit
 
   db_main:
