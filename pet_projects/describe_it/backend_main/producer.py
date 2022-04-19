@@ -1,8 +1,8 @@
 import os, pika, time, json
 
-queue_title = os.environ.get('QUEUE_TITLE')
+queue_title = os.environ.get('AMQP_QUEUE')
 if not queue_title:
-    queue_title = 'main_to_user'
+    queue_title = 'hello'
 
 amqp_conn_url = os.environ.get('AMQP_URL')
 if not amqp_conn_url:
@@ -24,8 +24,8 @@ ch = pika_conn.channel()
 
 ch.queue_declare(queue=queue_title)
 
-def publish(method, body):
-    pika_props = pika.BasicProperties(method)
+def publish(headers, body):
+    pika_props = pika.BasicProperties(headers=headers)
     ch.basic_publish(exchange='',
         routing_key=queue_title,
         body=json.dumps(body),

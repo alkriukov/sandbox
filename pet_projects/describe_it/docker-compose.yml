@@ -9,6 +9,7 @@ services:
     environment:
       FLASK_ENV: development
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      AMQP_QUEUE: describe_it_main_to_user
       MYSQL_DATABASE: db_main
       MYSQL_USER: root
       MYSQL_PASSWORD: root
