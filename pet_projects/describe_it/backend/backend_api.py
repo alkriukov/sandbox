@@ -268,7 +268,7 @@ def apiSetVotes(request_method, request_data):
                         con_to_vote = VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=votes)
                         downvotes = votes
                     db.session.add(con_to_vote)
-                resp_text = str(json_body['base']) + ' > ' + str(json_body['vote']) + ' +' + upvotes + ' -' + downvotes
+                resp_text = str(json_body['base']) + ' > ' + str(json_body['vote']) + ' +' + str(upvotes) + ' -' + str(downvotes)
                 db.session.commit()
                 db_changed = True
             except KeyError:
