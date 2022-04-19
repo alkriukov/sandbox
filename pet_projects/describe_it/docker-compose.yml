@@ -29,7 +29,7 @@ services:
       DB_PATH: 'mysql://user:user@db_user:3307/db_user'
     command: 'python backend_user.py'
     ports:
-      - "8001:5000"
+      - "8002:5000"
     depends_on:
       - db_main
       - rabbit
