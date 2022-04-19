@@ -101,10 +101,8 @@ def apiChangeTags(request_method, request_data, tagname):
                         if new_tag.text not in tag_names:
                             tag_names.append(new_tag.text)
                             tags.append(new_tag)
-            resp_text = ' '.join(tag_names)
+            resp_text = '#' + ' #'.join(tag_names)
         elif request_method == 'PUT':
-            if tagname[0] != '#':
-                tagname = '#' + str(tagname)            
             tag_exists_already = db.session.query(Tag).filter_by(text=tagname).first()
             if tag_exists_already:
                 raise ElementAlreadyExistsError(str(tagname) + ' already exists')
@@ -118,8 +116,6 @@ def apiChangeTags(request_method, request_data, tagname):
                 new_text = str(json_body['text'])
                 if not new_text or len(new_text)<=1:
                     raise IncorrectInputValueError('Specified text value is too short')
-                if new_text[0] != '#':
-                    new_text = '#' + str(new_text)            
                 db.session.query(Tag).filter_by(text=tagname).update({'text': new_text})
                 resp_text = str(tagname) + ' > ' + str(new_text)
                 db.session.commit()
