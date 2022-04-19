@@ -15,7 +15,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+
+migration_dir = 'migrations_' + str(db_path.rsplit('/', 1)[-1])
+migrate = Migrate(app, db, directory=migration_dir)
 
 @dataclass
 class Tag(db.Model):
