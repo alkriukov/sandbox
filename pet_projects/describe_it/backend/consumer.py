@@ -1,11 +1,51 @@
-import os, pika, time
+import os, pika, time, json
+import backend_api
+from flask import Response
+
+class NoMatchToConsumerOperation(Exception):
+    pass
+
 
 def callback(ch, method, properties, body):
     print('CONSUMER CALLBACK START')
     print(os.environ.get('AMQP_QUEUE'))
-    print(properties)
-    print(body)
+    db_changed = False
+    resp_text = ''
+    resp_status = 200
+    try:
+        method = properties.headers['method']
+        operation = properties.headers['operation']
+        message_body = json.loads(body.decode('utf-8', errors='ignore'))
+        request_args = message_body['request_args']
+        request_data = message_body['request_body']
+
+        if operation == 'apiChangeTags':
+            if 'tagname' not in request_args.keys():
+                raise NoMatchToConsumerOperation('tagname missing from request arguments')
+            response_info, db_changed = backend_api.apiChangeTags(method, request_data, request_args['tagname'])
+        elif operation == 'apiChangeConnections':
+            response_info, db_changed = backend_api.apiChangeConnections(method, request_data)
+        elif operation == 'apiSetVotes':
+            response_info, db_changed = backend_api.apiSetVotes(method, request_data)
+        elif operation == 'apiVote':
+            if 'up_or_down' not in request_args.keys():
+                raise NoMatchToConsumerOperation('up_or_down missing from request arguments')
+            response_info, db_changed = backend_api.apiVote(method, request_data, request_args['up_or_down'])
+        else:
+            raise NoMatchToConsumerOperation('Missing any matched consumer method')
+        resp_text = response_info.response
+        resp_status = response_info.status
+    except NoMatchToConsumerOperation as e:
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
+        resp_status=400
+    except Exception as e:
+        resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
+        resp_status = 500
+    print(resp_text)
+    print(resp_status)
+    print('DB Changed: ' + str(db_changed))
     print('CONSUMER CALLBACK FINISH\n\n\n')
+
 
 amqp_conn_url = os.environ.get('AMQP_URL')
 if not amqp_conn_url:
