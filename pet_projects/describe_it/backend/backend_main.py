@@ -32,7 +32,7 @@ def changeConnections():
     request_data = request.get_data().decode('utf-8', errors='ignore')
     response_info, db_changed = backend_api.apiChangeConnections(request.method, request_data)
     if db_changed:
-        amqp_headers = { 'method': request.method, 'operation': 'changeConnections', }
+        amqp_headers = { 'method': request.method, 'operation': 'apiChangeConnections', }
         amqp_body = { 'request_args': { }, 'request_body': request_data }
         producer.publish(amqp_headers, amqp_body)
     return response_info
@@ -42,7 +42,7 @@ def setVotes():
     request_data = request.get_data().decode('utf-8', errors='ignore')
     response_info, db_changed = backend_api.apiSetVotes(request.method, request_data)
     if db_changed:
-        amqp_headers = { 'method': request.method, 'operation': 'changeConnections', }
+        amqp_headers = { 'method': request.method, 'operation': 'apiSetVotes', }
         amqp_body = { 'request_args': { }, 'request_body': request_data }
         producer.publish(amqp_headers, amqp_body)
     return response_info
@@ -54,7 +54,7 @@ def vote(up_or_down):
     if up_or_down and (up_or_down in ['up', 'down']):
         response_info, db_changed = backend_api.apiVote(request.method, request_data, up_or_down)
         if db_changed:
-            amqp_headers = { 'method': request.method, 'operation': 'apiChangeTags', }
+            amqp_headers = { 'method': request.method, 'operation': 'apiVote', }
             amqp_body = { 'request_args': {'up_or_down': up_or_down }, 'request_body': request_data }
             producer.publish(amqp_headers, amqp_body)
     return response_info
