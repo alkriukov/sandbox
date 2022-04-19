@@ -10,12 +10,36 @@ app = backend_api.app
 def index():
     return 'Hello'
 
+@app.route('/api/tags/', methods=['GET'])
+def showTags():
+    return backend_api.apiShowTags()
+
 @app.route('/api/tag/<tagname>/', methods=['GET'])
 def changeTags(tagname):
     response_info = 'URL should end with valid tag/<tagname>/'
     request_data = request.get_data().decode('utf-8', errors='ignore')
     if tagname:
         response_info, db_changed = backend_api.apiChangeTags(request.method, request_data, tagname)
+    return response_info
+
+@app.route('/api/connection/', methods=['GET'])
+def changeConnections():
+    request_data = request.get_data().decode('utf-8', errors='ignore')
+    response_info, db_changed = backend_api.apiChangeConnections(request.method, request_data)
+    if db_changed:
+        amqp_headers = { 'method': request.method, 'operation': 'changeConnections', }
+        amqp_body = { 'request_args': { }, 'request_body': request_data }
+        producer.publish(amqp_headers, amqp_body)
+    return response_info
+
+@app.route('/api/votes/', methods=['GET'])
+def setVotes():
+    request_data = request.get_data().decode('utf-8', errors='ignore')
+    response_info, db_changed = backend_api.apiSetVotes(request.method, request_data)
+    if db_changed:
+        amqp_headers = { 'method': request.method, 'operation': 'changeConnections', }
+        amqp_body = { 'request_args': { }, 'request_body': request_data }
+        producer.publish(amqp_headers, amqp_body)
     return response_info
 
 @app.route('/api/vote/<up_or_down>/', methods=['PUT'])
