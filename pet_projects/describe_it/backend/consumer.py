@@ -18,7 +18,10 @@ def callback(ch, method, properties, body):
         message_body = json.loads(body.decode('utf-8', errors='ignore'))
         request_args = message_body['request_args']
         request_data = message_body['request_body']
-
+        print(method)
+        print(operation)
+        print(request_args)
+        print(request_data)
         if operation == 'apiChangeTags':
             if 'tagname' not in request_args.keys():
                 raise NoMatchToConsumerOperation('tagname missing from request arguments')
