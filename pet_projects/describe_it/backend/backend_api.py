@@ -99,7 +99,7 @@ def apiChangeTags(request_method, request_data, tagname):
                         if new_tag.text not in tag_names:
                             tag_names.append(new_tag.text)
                             tags.append(new_tag)
-            resp_text = ' '.join(tag_names)
+            resp_text = '#' + ' #'.join(tag_names)
         elif request_method == 'PUT':
             tag_exists_already = db.session.query(Tag).filter_by(text=tagname).first()
             if tag_exists_already:
