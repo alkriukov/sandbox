@@ -1,7 +1,11 @@
 import os, pika, time
 
-def callback_hello(ch, method, properties, body):
-    print('Callback hello')
+def callback(ch, method, properties, body):
+    print('CONSUMER CALLBACK START')
+    print(os.environ.get('AMQP_QUEUE'))
+    print(properties)
+    print(body)
+    print('CONSUMER CALLBACK FINISH\n\n\n')
 
 amqp_conn_url = os.environ.get('AMQP_URL')
 if not amqp_conn_url:
@@ -21,6 +25,10 @@ while conn_attempts > 0:
         time.sleep(10)
 ch = pika_conn.channel()
 
-ch.queue_declare(queue='hello')
-ch.basic_consume(queue='hello', on_message_callback=callback_hello, auto_ack=True)
+queue_name = os.environ.get('AMQP_QUEUE')
+if not queue_name:
+    queue_name = 'hello'
+
+ch.queue_declare(queue=queue_name)
+ch.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 ch.start_consuming()

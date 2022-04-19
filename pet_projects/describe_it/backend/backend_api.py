@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 db_path = os.environ.get('DB_PATH')
 if not db_path:
-    db_path = 'mysql://main:main@db_main:3306/db_main'
+    db_path = 'mysql://main:main@localhost:18003/db_main'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path
@@ -55,7 +55,10 @@ if flask_env and flask_env == 'development':
     this_is_prod = False
 
 
-class TagNotFoundException(Exception):
+class ElementNotFoundException(Exception):
+    pass
+
+class ElementAlreadyExistsException(Exception):
     pass
 
 class IncorrectVotesValue(Exception):
@@ -65,6 +68,7 @@ class IncorrectVotesValue(Exception):
 def apiShowTags():
     resp_text = ''
     resp_status = 200
+    db_changed = False
     try:
         current_tags = Tag.query.all()
         tags_to_show = []
@@ -74,11 +78,12 @@ def apiShowTags():
     except Exception as e:
         resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 500
-    return Response(response=resp_text, status=resp_status)
+    return Response(response=resp_text, status=resp_status), db_changed
 
 def apiChangeTags(request_method, request_data, tagname):
     resp_text = ''
     resp_status = 200
+    db_changed = False
     try:
         if request_method == 'GET':
             requested_tag_in_db = Tag.query.filter_by(text=tagname).first()
@@ -96,48 +101,53 @@ def apiChangeTags(request_method, request_data, tagname):
         elif request_method == 'PUT':
             tag_exists_already = db.session.query(Tag).filter_by(text=tagname).first()
             if tag_exists_already:
-                resp_text = str(tagname) + ' already exists'
-            else:
-                db.session.add(Tag(text=tagname))
-                db.session.commit()
-                resp_text = str(tagname) + ' added'
+                raise ElementAlreadyExistsException(str(tagname) + ' already exists')
+            db.session.add(Tag(text=tagname))
+            resp_text = str(tagname) + ' added'
+            db.session.commit()
+            db_changed = True
         elif request_method == 'POST':
             try:
                 json_body = json.loads(request_data)
                 new_text = str(json_body['text'])
                 db.session.query(Tag).filter_by(text=tagname).update({'text': new_text})
-                db.session.commit()
                 resp_text = str(tagname) + ' > ' + str(new_text)
+                db.session.commit()
             except KeyError:
                 resp_text = str(json.loads(request_data)) + ' should have "text" key'
                 resp_status = 400
+            db_changed = True
         elif request_method == 'DELETE':
             tag_to_del = Tag.query.filter_by(text=tagname).first()
             if not tag_to_del:
-                raise TagNotFoundException(str(tagname) + ' not found')
+                raise ElementNotFoundException(resp_text = str(tagname) + ' not found')
             for c in TagConnect.query.filter(or_(TagConnect.base_id==tag_to_del.id, TagConnect.next_id==tag_to_del.id)):
                 db.session.delete(c)
             for v in VoteConnect.query.filter(or_(VoteConnect.base_id==tag_to_del.id, VoteConnect.vote_id==tag_to_del.id)):
                 db.session.delete(v)
             db.session.delete(tag_to_del)
-            db.session.commit()
             resp_text = str(tagname) + ' deleted'
+            db.session.commit()
+            db_changed = True
         else:
             resp_text = 'Unsupported request method'
+            resp_status = 400
+    except ElementAlreadyExistsException as e:
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
+    except ElementNotFoundException as e:            
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
     except json.decoder.JSONDecodeError as e:
         resp_text = 'Cannot load json from ' + str(request_data)
-        resp_status = 400
-    except TagNotFoundException as e:            
-        resp_text = str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 400
     except Exception as e:
         resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 500
-    return Response(response=resp_text, status=resp_status)
+    return Response(response=resp_text, status=resp_status), db_changed
 
 def apiChangeConnections(request_method, request_data):
     resp_text = ''
-    resp_status = 200 
+    resp_status = 200
+    db_changed = False
     try:
         if request_method == 'GET':
             current_conn = TagConnect.query.all()
@@ -152,18 +162,18 @@ def apiChangeConnections(request_method, request_data):
                 json_body = json.loads(request_data)
                 base_tag = Tag.query.filter_by(text=json_body['base']).first()
                 if not base_tag:
-                    raise TagNotFoundException(str(json_body['base']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['base']) + ' not found')
                 next_tag = Tag.query.filter_by(text=json_body['next']).first()
                 if not next_tag:
-                    raise TagNotFoundException(str(json_body['next']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['next']) + ' not found')
                 con_exists_already = TagConnect.query.filter(
                     and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id)).first()
                 if con_exists_already:
-                    resp_text = str(base_tag.text) + ' > ' + str(next_tag.text) + ' already exists'
-                else:
-                    db.session.add(TagConnect(base_id=base_tag.id, next_id=next_tag.id))
-                    db.session.commit()
-                    resp_text = str(base_tag.text) + ' > ' + str(next_tag.text)
+                    raise ElementAlreadyExistsException(str(base_tag.text) + ' > ' + str(next_tag.text) + ' already exists')
+                db.session.add(TagConnect(base_id=base_tag.id, next_id=next_tag.id))
+                resp_text = str(base_tag.text) + ' > ' + str(next_tag.text)
+                db.session.commit()
+                db_changed = True
             except KeyError as e:
                 resp_text = str(json.loads(request_data)) + ' should have "base" and "next" keys'
                 resp_status = 400
@@ -172,40 +182,42 @@ def apiChangeConnections(request_method, request_data):
                 json_body = json.loads(request_data)
                 base_tag = Tag.query.filter_by(text=json_body['base']).first()
                 if not base_tag:
-                    raise TagNotFoundException(str(json_body['base']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['base']) + ' not found')
                 next_tag = Tag.query.filter_by(text=json_body['next']).first()
                 if not next_tag:
-                    raise TagNotFoundException(str(json_body['next']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['next']) + ' not found')
                 con_to_del = TagConnect.query.filter(
                     and_(TagConnect.base_id==base_tag.id, TagConnect.next_id==next_tag.id))
                 record_deleted = False
                 for c in con_to_del:
                     db.session.delete(c)
                     record_deleted = True
-                if record_deleted:
-                    db.session.commit()
-                    resp_text = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
-                else:
-                    resp_text = str(base_tag.text) + ' > ' + str(next_tag.text) + ' not found'
+                if not record_deleted:
+                    raise ElementNotFoundException(str(base_tag.text) + ' > ' + str(next_tag.text) + ' not found')
+                resp_text = str(base_tag.text) + ' > ' + str(next_tag.text) + ' deleted'
+                db.session.commit()
+                db_changed = True
             except KeyError as e:
                 resp_text = str(json.loads(request_data)) + ' should have "base" and "next" keys'
                 resp_status = 400
         else:
             resp_text = 'Unsupported request method'
+    except ElementAlreadyExistsException as e:
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
+    except ElementNotFoundException as e:            
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
     except json.decoder.JSONDecodeError as e:
         resp_text = 'Cannot load json from ' + str(request_data)
-        resp_status = 400
-    except TagNotFoundException as e:            
-        resp_text = str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 400
     except Exception as e:
         resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 500
-    return Response(response=resp_text, status=resp_status)
+    return Response(response=resp_text, status=resp_status), db_changed
 
 def apiSetVotes(request_method, request_data):
     resp_text = ''
     resp_status = 200
+    db_changed = False
     try:
         if request_method == 'GET':
             current_votes = VoteConnect.query.all()
@@ -222,10 +234,10 @@ def apiSetVotes(request_method, request_data):
                 json_body = json.loads(request_data)
                 base_tag = Tag.query.filter_by(text=json_body['base']).first()
                 if not base_tag:
-                    raise TagNotFoundException(str(json_body['base']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['base']) + ' not found')
                 vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
                 if not vote_tag:
-                    raise TagNotFoundException(str(json_body['vote']) + ' not found')
+                    raise ElementNotFoundException(str(json_body['vote']) + ' not found')
                 up_or_down = json_body['up_or_down']
                 try:
                     votes = int(json_body['votes'])
@@ -233,55 +245,59 @@ def apiSetVotes(request_method, request_data):
                     raise IncorrectVotesValue("votes should be integer")
                 con_to_vote = VoteConnect.query.filter(
                     and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
+                upvotes = 0
+                downvotes = 0
                 if con_to_vote:
                     if up_or_down == 'up':
                         con_to_vote.upvotes = votes
                     elif up_or_down == 'down':
                         con_to_vote.downvotes = votes
+                    upvotes = con_to_vote.upvotes
+                    downvotes = con_to_vote.downvotes
                 else:
                     if up_or_down == 'up':
                         con_to_vote = VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=votes, downvotes=0)
+                        upvotes = votes
                     else:
                         con_to_vote = VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=votes)
+                        downvotes = votes
                     db.session.add(con_to_vote)
+                resp_text = str(json_body['base']) + ' > ' + str(json_body['vote']) + ' +' + upvotes + ' -' + downvotes
                 db.session.commit()
-                base_name = str(Tag.query.get(con_to_vote.base_id).text)
-                vote_name = str(Tag.query.get(con_to_vote.vote_id).text)
-                upvotes = str(con_to_vote.upvotes)
-                downvotes = str(con_to_vote.downvotes)
-                resp_text = base_name + ' > ' + vote_name + ' +' + upvotes + ' -' + downvotes
+                db_changed = True
             except KeyError:
-                resp_text = Response(response=str(json.loads(request_data)) + \
-                    ' should have "base", "vote", "up_or_down" and "votes" keys',
-                    status=400)
+                resp_text = str(json.loads(request_data)) + ' should have "base", "vote", "up_or_down" and "votes" keys'
                 resp_status = 400
         else:
             resp_text = 'Unsupported request method'
-    except json.decoder.JSONDecodeError as e:
-        resp_text = 'Cannot load json from ' + str(request_data)
-        resp_status = 400
+            resp_status = 400
+    except ElementAlreadyExistsException as e:
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
+    except ElementNotFoundException as e:            
+        resp_text = str(e.__class__.__name__) + ' ' + str(e)
     except IncorrectVotesValue as e:
         resp_text = str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 400
-    except TagNotFoundException as e:            
-        resp_text = str(e.__class__.__name__) + ' ' + str(e)
+    except json.decoder.JSONDecodeError as e:
+        resp_text = 'Cannot load json from ' + str(request_data)
         resp_status = 400
     except Exception as e:
         resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 500
-    return Response(response=resp_text, status=resp_status)
+    return Response(response=resp_text, status=resp_status), db_changed
 
 def apiVote(request_method, request_data, up_or_down):
     resp_text = 'Vote ' + up_or_down
     resp_status = 200
+    db_changed = False
     try:
         json_body = json.loads(request_data)
         base_tag = Tag.query.filter_by(text=json_body['base']).first()
         if not base_tag:
-            raise TagNotFoundException(str(json_body['base']) + ' not found')
+            raise ElementNotFoundException(str(json_body['base']) + ' not found')
         vote_tag = Tag.query.filter_by(text=json_body['vote']).first()
         if not vote_tag:
-            raise TagNotFoundException(str(json_body['vote']) + ' not found')
+            raise ElementNotFoundException(str(json_body['vote']) + ' not found')
         con_to_vote = VoteConnect.query.filter(
             and_(VoteConnect.base_id==base_tag.id, VoteConnect.vote_id==vote_tag.id)).first()
         if con_to_vote:
@@ -297,16 +313,17 @@ def apiVote(request_method, request_data, up_or_down):
                 db.session.add(
                     VoteConnect(base_id=base_tag.id, vote_id=vote_tag.id, upvotes=0, downvotes=1))
         db.session.commit()
+        db_changed = True
     except KeyError as e:
         resp_text = str(json.loads(request_data)) + ' should have "base" and "vote" keys'
         resp_status = 400
     except json.decoder.JSONDecodeError as e:
         resp_text = 'Cannot load json from ' + str(request_data)
         resp_status = 400
-    except TagNotFoundException as e:            
+    except ElementNotFoundException as e:            
         resp_text = str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 400
     except Exception as e:
         resp_text = 'Cannot process request ' + str(e.__class__.__name__) + ' ' + str(e)
         resp_status = 500
-    return Response(response=resp_text, status=resp_status)
+    return Response(response=resp_text, status=resp_status), db_changed

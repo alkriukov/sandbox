@@ -30,3 +30,4 @@ def publish(headers, body):
         routing_key=queue_title,
         body=json.dumps(body),
         properties=pika_props)
+    print('SENT')
