@@ -5,15 +5,12 @@ services:
   backend_main:
     build:
       context: .
-      dockerfile: ./backend_main/Dockerfile
+      dockerfile: ./backend/Dockerfile
     environment:
       FLASK_ENV: development
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
-      MYSQL_DATABASE: db_main
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_HOST: db_main
-      MYSQL_PORT: 3306
+      AMQP_QUEUE: describe_it_main_to_user
+      DB_PATH: 'mysql://main:main@db_main:3306/db_main'
     command: 'python backend_main.py'
     ports:
       - "8001:5000"
@@ -21,20 +18,46 @@ services:
       - db_main
       - rabbit
 
+  backend_user:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    environment:
+      FLASK_ENV: development
+      AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      AMQP_QUEUE: describe_it_user_to_main
+      DB_PATH: 'mysql://user:user@db_user:3306/db_user'
+    command: 'python backend_user.py'
+    ports:
+      - "8002:5000"
+    depends_on:
+      - db_user
+      - rabbit
+
   consumer_main:
     build:
       context: .
-      dockerfile: ./backend_main/Dockerfile
+      dockerfile: ./backend/Dockerfile
     environment:
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
-      MYSQL_DATABASE: db_main
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_HOST: db_main
-      MYSQL_PORT: 3306
+      AMQP_QUEUE: describe_it_user_to_main
+      DB_PATH: 'mysql://main:main@db_main:3306/db_main'
     command: 'python consumer.py'
     depends_on:
       - db_main
+      - rabbit
+
+  consumer_user:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    environment:
+      AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
+      AMQP_QUEUE: describe_it_main_to_user
+      DB_PATH: 'mysql://user:user@db_user:3306/db_user'
+    command: 'python consumer.py'
+    depends_on:
+      - db_user
       - rabbit
 
   db_main:
@@ -49,6 +72,20 @@ services:
       - 3306:3306
     volumes:
       - /var/lib/describe_it/db_main:/var/lib/mysql
+    mem_limit: 512m
+
+  db_user:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_user
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3307:3306
+    volumes:
+      - /var/lib/describe_it/db_user:/var/lib/mysql
     mem_limit: 512m
 
   rabbit:

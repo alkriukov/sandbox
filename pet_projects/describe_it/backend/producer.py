@@ -1,7 +1,8 @@
-import os, pika, time
+import os, pika, time, json
 
-def callback_hello(ch, method, properties, body):
-    print('Callback hello')
+queue_title = os.environ.get('AMQP_QUEUE')
+if not queue_title:
+    queue_title = 'hello'
 
 amqp_conn_url = os.environ.get('AMQP_URL')
 if not amqp_conn_url:
@@ -21,6 +22,12 @@ while conn_attempts > 0:
         time.sleep(10)
 ch = pika_conn.channel()
 
-ch.queue_declare(queue='hello')
-ch.basic_consume(queue='hello', auto_ack=True, on_message_callback=callback_hello)
-ch.start_consuming()
+ch.queue_declare(queue=queue_title)
+
+def publish(headers, body):
+    pika_props = pika.BasicProperties(headers=headers)
+    ch.basic_publish(exchange='',
+        routing_key=queue_title,
+        body=json.dumps(body),
+        properties=pika_props)
+    print('SENT')
