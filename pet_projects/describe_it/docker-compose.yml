@@ -26,7 +26,7 @@ services:
       FLASK_ENV: development
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
       AMQP_QUEUE: describe_it_user_to_main
-      DB_PATH: 'mysql://user:user@db_user:3307/db_user'
+      DB_PATH: 'mysql://user:user@db_user:3306/db_user'
     command: 'python backend_user.py'
     ports:
       - "8002:5000"
@@ -54,7 +54,7 @@ services:
     environment:
       AMQP_URL: 'amqp://put_user:put_password@rabbit:5672/%2F'
       AMQP_QUEUE: describe_it_user_to_main
-      DB_PATH: 'mysql://user:user@db_user:3307/db_user'
+      DB_PATH: 'mysql://user:user@db_user:3306/db_user'
     command: 'python consumer.py'
     depends_on:
       - db_user
