@@ -2,6 +2,9 @@
 *.sqlite3
 *.db
 
+# VSCode files
+.vscode/
+
 # Compiled Object files
 *.slo
 *.lo
