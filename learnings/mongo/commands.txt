@@ -1,0 +1,84 @@
+> mongo
+
+show dbs
+
+use test
+db.createCollection('messages')
+show collections
+
+db.messages.insert({
+    text: 'Hello World',
+    category: 'notes',
+    tags: ['hello', 'world'],
+    date: Date()
+})
+
+db.messages.insertMany([
+    {
+        text: 'Hello Mongo',
+        category: 'notes',
+        tags: ['hello', 'mongo'],
+        date: Date()
+    },
+    {
+        text: 'Mongo News',
+        category: 'news',
+        channel: 'alexey',
+        tags: ['mongo', 'news'],
+        date: Date()
+    }
+])
+
+db.messages.insert({
+    text: 'Later mongo news',
+    category: 'news',
+    channel: 'alexey',
+    tags: ['mongo', 'news'],
+    date: Date()
+})
+
+db.messages.insert({
+    text: 'More mongo news',
+    category: 'news',
+    channel: 'auto',
+    tags: ['mongo', 'news'],
+    date: Date()
+})
+
+db.messages.find()
+db.messages.find().pretty()
+db.messages.find({ category: 'notes' }).pretty()
+db.messages.find({ category: 'notes' }).sort({ date: 1 }).pretty()
+db.messages.find({ category: 'news' }).sort({ date: -1 }).pretty()
+
+db.messages.find().count()
+db.messages.find({ category: 'news' }).sort({ date: -1 }).limit(1).pretty()
+db.messages.findOne({ category: 'news' })
+
+
+db.messages.find({ category: 'notes' }).forEach(function(message) { print('Text: ' + message.text)})
+db.messages.find({ category: 'news' }).sort({ date: -1 }).forEach(function(message) { print('News: ' + message.text)})
+db.messages.find({ channel: 'alexey' }).sort({ date: -1 }).forEach(function(message) { print('News: ' + message.text)})
+db.messages.find({ channel: { $in: ['alexey', 'auto'] } }).sort({ date: -1 }).forEach(function(message) { print('News: ' + message.text)})
+
+db.messages.find({ text: { $regex: "Hello" } }).pretty()
+db.messages.find({ text: /Hello/ }).pretty()
+
+db.messages.find({ tags: { $in: ['mongo'] } }).pretty()
+
+db.messages.update({text: 'Hello Mongo'}, { $set: {text: 'Hello Mongo World', date: Date()} })
+db.messages.find({ text: /Hello Mongo/ }).pretty()
+
+db.messages.updateMany({}, { $rename: {'date': 'datetime'} })
+db.messages.find().forEach( function(message){ print('Timestamp: ' + message.datetime) } )
+
+db.messages.update({text: 'Hello World'}, {
+    $set: {
+        updates: [
+            { text: 'Update 1' },
+            { text: 'Update 2' }
+        ]
+    }
+})
+db.messages.find({ text: 'Hello World' }).pretty()
+db.messages.find({ updates: {$elemMatch: {text: 'Update 1'}} }).pretty()
