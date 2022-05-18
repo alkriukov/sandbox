@@ -1,0 +1,20 @@
+*** Settings ***
+Library             Selenium2Library
+Suite Setup         Go to Yandex
+Suite Teardown      Close All Browsers
+
+
+*** Test cases ***
+Ensure Moscow is shown in Russia request
+    Search and check    Russia      Moscow
+
+
+*** Keywords ***
+Go to Yandex
+    Open Browser       https://ya.ru      chrome
+
+Search and check
+    [Arguments]     ${query}    ${expected_result}
+    Input Text      id=text                             ${query}
+    Click Button    class=button
+    Wait Until Page Contains                            ${expected_result}     
