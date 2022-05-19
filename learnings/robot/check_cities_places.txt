@@ -1,0 +1,17 @@
+*** Settings ***
+Library     Selenium2Library
+
+
+*** Test cases ***
+Check city places
+    Check location on wiki page     Kremlin             Moscow
+    Check location on wiki page     Moscow University   Moscow
+
+
+*** Keywords ***
+Check location on wiki page
+    [Arguments]                     ${expected_place}                ${wiki_page}
+    ${wiki_url} =   Catenate        https://en.wikipedia.org/wiki/   ${wiki_page}
+    Open Browser                    ${wiki_url}                      chrome
+    Wait Until Page Contains        ${expected_place}
+    Close All Browsers

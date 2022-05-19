@@ -14,7 +14,7 @@ Go to Yandex
     Open Browser       https://ya.ru      chrome
 
 Search and check
-    [Arguments]     ${query}    ${expected_result}
-    Input Text      id=text                             ${query}
-    Click Button    class=button
-    Wait Until Page Contains                            ${expected_result}     
+    [Arguments]                 ${query}        ${expected_result}
+    Input Text                  id=text         ${query}
+    Click Button                class=button
+    Wait Until Page Contains    ${expected_result}     
