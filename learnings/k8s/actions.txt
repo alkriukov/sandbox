@@ -1,0 +1,54 @@
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install kubectl
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+
+
+minikube start
+kubectl cluster-info
+minikube pause
+minikube unpause
+kubectl get services
+kubectl get nodes
+kubectl version --output=json
+
+kubectl create deployment nginx-deploy --image=nginx
+kubectl get deployment
+kubectl get replicaset
+kubectl get pod
+kubectl describe <pod-name>
+kubectl logs <pod-name>
+kubectl exec <pod-name> -it -- /bin/bash
+kubectl delete deployment nginx-deploy
+
+echo apiVersion: kind: metadata: spec: > some-deployment.yaml
+kubectl apply -f some-deployment.yaml
+kubectl delete -f some-deployment.yaml
+
+
+
+wget https://get.helm.sh/helm-v3.9.0-linux-amd64.tar.gz
+tar -zxvf helm-v3.9.0-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin/helm
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add stable https://charts.helm.sh/stable
+helm install prometheus prometheus-community/kube-prometheus-stack
+
+helm ls
+kubectl get all
+
+kubectl port-forward service/prometheus-kube-prometheus-prometheus 9090 --address 0.0.0.0
+kubectl port-forwardeployment/prometheus-grafana 3000:3000 --address 0.0.0.0
+
+helm ls
+helm uninstall prometheus
+kubectl cluster-info
+minikube stop
+
