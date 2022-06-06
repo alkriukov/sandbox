@@ -25,7 +25,7 @@ def generate_new_token():
     return secrets.token_urlsafe(48)
 
 
-@api_view(['POST', 'PUT', 'DELETE',])
+@api_view(['PUT', 'POST', 'DELETE',])
 def user(request, user_name):
     response = HttpResponse('Request not processed')
     
@@ -41,12 +41,12 @@ def user(request, user_name):
     except User.DoesNotExist as e:
         searched_user = None
         response = HttpResponse('User Does Not Exist')
-    if request.method == 'PUT':
+    if request.method == 'POST':
         new_user = User.objects.create(username=user_name, password=user_pass, email=user_email)
         new_token = generate_new_token()
         Token.objects.create(token=new_token, owner=new_user)
         response = HttpResponse(new_token)
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
         if searched_user:
             is_valid_token = Token.objects.filter(token=user_token, owner=searched_user).exists()
             if is_valid_token:
@@ -77,7 +77,7 @@ def index(request):
     return HttpResponse('Hello API')
 
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE',])
+@api_view(['GET', 'PUT', 'POST', 'DELETE',])
 def graph(request, graph_name):
     response = HttpResponse('Request not processed')
     cwd = os.getcwd()
@@ -121,8 +121,7 @@ def graph(request, graph_name):
             else:
                 response = HttpResponse('Graph Not Found')
         
-        elif request.method == 'PUT':
-            
+        elif request.method == 'POST':
             if not os.path.exists(folder_full_path):
                 os.makedirs(folder_full_path)
             os.chdir(folder_full_path)
@@ -139,7 +138,7 @@ def graph(request, graph_name):
             os.system(f'git commit -m "{commit_message}"')
             response = HttpResponse('Graph Updated')
         
-        elif request.method == 'POST':
+        elif request.method == 'PUT':
             merge_to = request_body.get('merge_to')
             os.chdir(folder_full_path)
             os.system(f'git checkout {branch_name}')
