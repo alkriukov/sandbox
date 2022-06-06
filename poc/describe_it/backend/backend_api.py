@@ -102,7 +102,7 @@ def apiChangeTags(request_method, request_data, tagname):
                             tag_names.append(new_tag.text)
                             tags.append(new_tag)
             resp_text = '#' + ' #'.join(tag_names)
-        elif request_method == 'PUT':
+        elif request_method == 'POST':
             tag_exists_already = db.session.query(Tag).filter_by(text=tagname).first()
             if tag_exists_already:
                 raise ElementAlreadyExistsError(str(tagname) + ' already exists')
@@ -110,7 +110,7 @@ def apiChangeTags(request_method, request_data, tagname):
             resp_text = str(tagname) + ' added'
             db.session.commit()
             db_changed = True
-        elif request_method == 'POST':
+        elif request_method == 'PUT':
             try:
                 json_body = json.loads(request_data)
                 new_text = str(json_body['text'])
@@ -163,7 +163,7 @@ def apiChangeConnections(request_method, request_data):
                 next_name = str(Tag.query.get(c.next_id).text)
                 conn_to_show.append(base_name + ' > ' + next_name)
             resp_text = '\n'.join(conn_to_show)
-        elif request_method == 'PUT':
+        elif request_method == 'POST':
             try:
                 json_body = json.loads(request_data)
                 base_tag = Tag.query.filter_by(text=json_body['base']).first()
@@ -235,7 +235,7 @@ def apiSetVotes(request_method, request_data):
                 downvotes = str(c.downvotes)
                 votes_to_show.append(base_name + ' > ' + vote_name + ' +' + upvotes + ' -' + downvotes)
             resp_text = '\n'.join(votes_to_show)
-        elif request_method == 'POST':
+        elif request_method == 'PUT':
             try:
                 json_body = json.loads(request_data)
                 base_tag = Tag.query.filter_by(text=json_body['base']).first()

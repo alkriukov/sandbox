@@ -42,7 +42,7 @@ def setVotes():
         producer.publish(amqp_headers, amqp_body)
     return response_info
 
-@app.route('/api/vote/<up_or_down>/', methods=['PUT'])
+@app.route('/api/vote/<up_or_down>/', methods=['POST'])
 def vote(up_or_down):
     response_info = 'URL should end with vote/up/ or vote/down/'
     request_data = request.get_data().decode('utf-8', errors='ignore')
