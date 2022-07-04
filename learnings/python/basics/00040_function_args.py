@@ -22,8 +22,8 @@ f_with_args_kwargs('Hello', msg='You are welcome')
 f_with_args_kwargs('Hello', 'Alexey', msg='You are welcome', bye='Bye!')
 
 
-def f_with_mandatory_and_optional_args(mand, *args, kw='Keyword agrument', **kwargs):
-    print(mand)
+def f_with_mandatory_and_optional_args(mandatory_positional_arg, *args, kw='Keyword agrument', **kwargs):
+    print(mandatory_positional_arg)
     for position_arg in args:
         print(position_arg)
     print('kw', kw)

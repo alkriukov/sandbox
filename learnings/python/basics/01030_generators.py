@@ -7,6 +7,8 @@ def square_gen():
         yield square
 
 squares = square_gen()
+print(squares)
+
 print(next(squares))
 print(next(squares))
 print(next(squares))
