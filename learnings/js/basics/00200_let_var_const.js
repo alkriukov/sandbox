@@ -1,5 +1,5 @@
 console.log('In addition to var, now we have also let and const');
-console.log('In most cases we\'ll use let. Block visibility, ok to change');
+console.log('In most cases we\'ll use const and let. Block visibility, ok to change');
 
 let clientServiceLevel = 'Regular';
 clientServiceLevel = 'Key';
@@ -24,3 +24,17 @@ console.log('const prohibits reassignment to another object. E.g. my_const = { p
     console.log(`let declared variables can be used within the block: ${shortName}`)
 };
 console.log(`var declared variables are visible outside the block: ${name}`);
+
+
+var x0 = 10;
+function f1() {
+    var x1 = 5;
+}
+function f2() {
+    console.log(x1);
+    var x2 = 3;
+}
+
+f1();
+f2();
+console.log(x0);

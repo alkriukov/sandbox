@@ -1,13 +1,13 @@
-let numbers: number[] = [1, 2, 4, 5, 9, 2, 4];
+const numbers: number[] = [1, 2, 4, 5, 9, 2, 4];
 numbers.pop()
 
 for (let n in numbers) {
-    console.log(n);
+    console.log(numbers[n]);
 }
 
-let tuple_me: [number, string] = [37, "Alexey"];
+const tuple_me: [number, string] = [37, "Alexey"];
 console.log(tuple_me[1]);
 
-let tuple_wife: [number, string] = [33, "Olga"];
+const tuple_wife: [number, string] = [33, "Olga"];
 console.log(tuple_wife[1]);
 
