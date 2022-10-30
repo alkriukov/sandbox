@@ -1,0 +1,30 @@
+das Messen - измерение
+
+die Entfernung - расстояние
+die Distanz - дистанция
+die Länge - длина
+die Höhe - высота
+die Tiefe - глубина
+die Stärke - сила
+die Geschwindigkeit - скорость
+der Kilometer - километр
+das Kilogramm - килограмм
+das Pfund - фунт
+
+dick - толстый; густой
+dünn - тонкий
+voll - полный 
+leer - пустой
+hoch - высокий
+niedrig - низкий
+lang - длинный; долгий 
+kurz - короткий
+schwer - тяжёлый 
+leicht - лёгкий
+schnell  - быстрый
+langsam - медленный
+weich - мягкий
+hart - твёрдый; жесткий; трудный
+
+sinken - опускаться; погружаться
+heben - поднимать

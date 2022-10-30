@@ -1,0 +1,67 @@
+die Wohnung - квартира
+
+das Zimmer - комната
+das Wohnzimmer - зал
+das Schlafzimmer - спальня
+das Badezimmer - ванная
+die Dusche - душ
+die Toilette - туалет
+die Küche - кухня
+der Flur - коридор
+der Balkon - балкон
+der Fußboden  - пол
+die Decke - потолок; одеяло
+die Wand - стена
+die Treppe - лестница
+die Tür - дверь
+das Fenster - окно
+das Fensterbrett - подоконник
+die Oberfläche - поверхность
+die Gardine - занавес(ка), штора
+der Schalter - выключатель; окошко (кассы)
+die Steckdose - розетка
+der Wasserhahn - (водопроводный) кран
+das Rohr - труба
+der Schornstein  - дымовая труба
+der Müll - мусор
+die Abfälle - отходы
+
+
+
+die Möbel - мебель
+
+der Tisch - стол
+der Stuhl - стул
+der Sessel - кресло
+die Couch [кáуч] - диван
+das Bett - кровать
+der Schrank - шкаф
+das Regal - полка
+der Spiegel - зеркало
+der Teppich - ковер
+der Kühlschrank - холодильник
+die Mikrowelle - микроволновка
+der Ofen - печь, духовка
+der Herd - кухонная плита
+
+
+
+das Geschirr - посуда
+
+die Tasse - чашка
+das Glas - стакан; стекло
+der Becher - кружка
+der Teller - тарелка
+der Löffel - ложка
+die Gabel - вилка
+die Untertasse - блюдце
+die Flasche - бутылка
+die Serviette - салфетка
+der Topf - кастрюля; горшок
+die Pfanne - сковородка 
+der Kessel - чайник; котел
+das Messer - нож
+scharf - острый
+stumpf - тупой (нож)
+
+

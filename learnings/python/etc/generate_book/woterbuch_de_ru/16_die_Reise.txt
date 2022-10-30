@@ -1,0 +1,36 @@
+die Reise - поездка, путешествие
+
+der Schritt - шаг
+die Maschine - машина; механизм
+der Transport  - транспорт
+das Schiff - корабль
+das Flugzeug - самолет
+das Ticket - билет (на самолёт)
+das Gepäck - багаж
+das Auto - автомобиль
+die Straßenbahn - трамвай
+der Bus - автобус
+der Zug - поезд
+die Fahrkarte, Fahrschein - билет на проезд
+das Rad - колесо
+das Lenkrad - руль
+das Fahrrad - велосипед
+der Kofferraum  - багажник
+das Benzin - бензин
+
+pro - (километров) в (час)
+
+Haupt... - главный
+gerade  - прямой; прямо
+links - cлева
+rechts - справа
+dort - там
+dorthin - туда 
+vorwärts - вперед
+vorne - впереди
+
+gehen - идти
+fahren - ехать
+fliegen - летать
+
+

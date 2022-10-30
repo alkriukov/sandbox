@@ -1,0 +1,37 @@
+die Kleidung - одежда
+
+die Schuhe - обувь, туфли
+die Stiefel - сапоги
+die Turnschuhe - кроссовки
+der Mantel - пальто
+das Kleid - платье
+der Anzug - костюм
+das Hemd - рубашка
+die Bluse - блузка
+der Rock - юбка
+die Handschuhe - перчатки
+die Fäustlinge - варежки
+der Hut - шляпа
+die Mütze - шапка; кепка
+die Jacke - Куртка
+die Strickjacke - кофта
+das Sakko - пиджак
+der Schal - шарф
+die Socke - носок
+der Pullover - свитер
+das T-Shirt [тишёрт] - футболка
+die Krawatte - галстук
+die Hose - брюки, штаны
+die Shorts [шортс] - шорты
+die Strumpfhose - колготки
+die Strümpfe - чулки
+die Jeans [джинз] - джинсы
+die Kapuze - капюшон
+der Gürtel - ремень
+die Unterwäsche - нижнее белье 
+die Unterhose - трусы
+der Büstenhaĺter - бюстгальтер
+
+tragen  - носить
+anziehen - надевать
+ausziehen - снимать (одежду)

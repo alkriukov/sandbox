@@ -1,0 +1,104 @@
+das Mahl - еда
+
+die Mahlzeit - принятие пищи, еда
+die Kost - питание, стол
+gerunde Kost - здоровое питание
+der Krankenkost - больничная диета
+die Diät - диета
+das Frühstück - завтрак
+das Mittagessen - обед
+das Abendessen - ужин
+
+
+
+die Lebensmittel - еда, продукты
+
+das Brot - хлеб
+die Butter - сливочное масло
+das Öl  - растительное масло
+der Käse - сыр
+die Wurst - колбаса
+das Würstchen - сосиска
+der Schinken - ветчина
+das Fleisch - мясо
+das Rindfleisch - говядина
+das Schweinefleisch - свинина
+das Lammfleisch - баранина
+das Hähnchen - курица (мясо)
+das Kotelett - котлета, отбивная
+der Fisch - рыба
+das Ei - яйцо
+der Salat - салат
+der Pilz - грибы
+der Mais - кукуруза
+der Brei - каша
+die Haferflocken - овсянка
+die Suppe - суп 
+das belegte Brötchen - бутерброд
+der Reis - рис
+die Nudeln - лапша
+das Mehl - мука
+das Gewürz - специя, пряность
+der Pfeffer - перец
+das Salz - соль
+die Zwiebel - лук (репчатый)
+der Knoblauch - чеснок
+die Soße - соус
+das Gemüse - овощи
+die Kartoffeln - картофель
+die Mohrrübe - морковь
+die Zuckerrübe - свекла
+die Tomate - помидор
+die Gurke - огурец
+der Kohl - капуста
+die Zucchini [цукини] - кабачок
+die Aubergine [обэр'жинэ] - баклажан
+die Bohnen - бобы
+die Erbsen - горох
+die Nuss - орех
+das Obst  - фрукты
+der Apfel - яблоко
+die Birne - груша
+die Banane - банан
+die Beere - ягода
+die Erdbeere - клубника, земляника
+die Himbeere - малина
+die Kirsche - вишня
+die Pflaume - слива
+die Trauben  - виноград
+die Aprikose - абрикос
+der Pfirsich - персик
+die Melone - дыня
+die Wassermelone - арбуз
+der Kürbis - тыква
+die Orange [орáнжэ] - апельсин
+die Mandarine - мандарин
+die Zitrone - лимон
+die Ananas - ананас
+der Zucker - сахар
+der Honig - мёд 
+die Marmelade - варенье
+der Kuchen - торт, пирог
+das Brötchen - булочка
+das Gebäck - печенье
+die Süßigkeiten - конфеты, сладости
+das Eis - мороженое; лёд
+die Schokolade - шоколад
+das Wasser - вода
+das Sodawasser - газировка
+der Saft - сок
+der Wein - вино
+der Tee - чай
+der Kaffee - кофе
+die Milch - молоко
+die Sahne - сливки
+der Joghurt - йогурт
+der Quark - творог
+
+schmackhaft - вкусный
+bitter - горький
+sauer - кислый
+salzig - соленый
+
+füttern - кормить
+trinken - пить
