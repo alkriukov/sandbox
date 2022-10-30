@@ -1,0 +1,40 @@
+die Zahl - число, цифра; количество
+
+null - ноль
+eins - один
+zwei - два
+drei  - три
+vier - четыре
+fünf - пять
+sechs - шесть
+sieben - семь
+acht  - восемь
+neun  - девять
+zehn - десять
+elf - одиннадцать
+zwölf - двенадцать
+dreizehn - тринадцать
+vierzehn - четырнадцать
+fünfzehn - пятнадцать
+sechzehn - шестнадцать
+siebzehn - семнадцать
+achtzehn  - восемнадцать
+neunzehn - девятнадцать
+zwanzig  - двадцать
+dreißig  - тридцать
+vierzig  - сорок
+fünfzig - пятьдесят
+sechzig - шестьдесят
+siebzig - семьдесят
+achtzig - восемьдесят
+neunzig - девяносто
+hundert  - сто
+tausend - тысяча
+
+der erste - первый
+der zweite - второй
+der dritte - третий
+der vierte  - четвертый
+
+das Stück - кусок; штука
+das Paar - пара

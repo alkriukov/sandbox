@@ -1,0 +1,14 @@
+die Farbe - цвет, краска
+
+schwarz - чёрный
+blau  - голубой; синий
+braun - коричневый
+grün - зелёный
+grau - серый
+rot - красный
+gelb - желтый
+rosa - розовый
+violett - фиолетовый
+weiß - белый
+dunkel - тёмный 
+hell - светлый

@@ -1,0 +1,28 @@
+das Papier - бумага
+
+der Kugelschreiber - ручка
+der Bleistift - карандаш
+das Lineal -  линейка
+die Pinsel - кисть, кисточка
+das Wörterbuch - словарь
+die Sprache - язык
+das Buch - книга
+das Heft - тетрадь
+die Seite - страница
+das Wort - слово
+der Buchstabe - буква
+das Notizbuch - блокнот
+die Notiz - пометка, запись
+der Brief - письмо
+die Postkarte - открытка
+das Paket - посылка
+der Umschlag - конверт
+der Kalender - календарь
+die Zeitung - газета
+die Zeitschrift - журнал
+
+schreiben - писать
+beschreiben - описывать
+malen - рисовать
+zeichnen - рисовать, чертить
+

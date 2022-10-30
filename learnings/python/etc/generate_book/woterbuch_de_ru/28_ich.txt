@@ -1,0 +1,21 @@
+ich - я 
+du - ты
+er - он
+sie - она
+es - оно
+wir - мы 
+ihr - вы
+sie - они 
+Sie - Вы
+
+mein - мой
+dein - твой
+sein - его
+ihr - её; их
+unser - наш 
+euer - ваш
+Ihr - Ваш
+
+eigen - собственный
+
+

@@ -1,0 +1,14 @@
+der Name - имя, фамилия; название;
+
+das Formular - формуляр, бланк
+der Vorname - имя
+der Familienname - фамилия
+der Mädchenname - девичья фамилия
+das Geburtsdatum - дата рождения
+der Geburtsort - место рождения
+die Adresse - адрес
+der Familienstand - семейное положение
+ledig - холостой, незамужняя
+verheiratet - женатый / замужняя
+geschieden - разведенный
+verwitwet - овдовевший

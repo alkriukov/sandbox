@@ -1,0 +1,55 @@
+die Welt - мир (планета)
+
+das Land - страна; сельская местность; земля
+Deutschland - Германия
+die Schweiz - Швейцария
+Russland  - Россия 
+Österreich - Австрия
+
+
+
+der Ort - район, местность
+
+die Stadt - город
+das Haus - дом
+das Gebäude - здание
+der Platz - площадь; место
+der Eingang - вход
+der Ausgang - выход
+das Zentrum - центр
+der Hof - двор
+das Dach - крыша
+der Zaun - забор
+das Dorf - деревня, поселок
+die Schule - школа
+die Universität - университет
+das Theater - театр
+die Kirche - церковь
+das Restaurant - ресторан
+das Cafe - кафе
+das Hotel - гостиница
+die Bank - банк
+das Kino - кинотеатр
+das Krankenhaus - больница
+die Polizei - полиция
+das Postamt - почта
+der Bahnhof - станция, вокзал
+der Flughafen - аэропорт
+das Geschäft - магазин
+die Apotheke - аптека
+der Markt - рынок
+das Büro - офис
+die Firma - фирма
+der Betrieb - предприятие
+die Straße - улица
+der Weg - дорога
+die Kreuzung - перекрёсток
+die Haltestelle - остановка
+der Gehsteig - тротуар
+der Pfad - тропа, тропинка
+der Garten - сад
+der Park - парк
+die Brücke - мост
+das Feld - поле
+die Grenze - граница
+der Zoll - таможня
