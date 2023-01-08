@@ -1,6 +1,6 @@
 die Leute -  люди
 
-der Mensch - человек
+der Mensch - человек (мн.: Menschen)
 der Mann - мужчина; муж
 die Frau - женщина; жена
 das Kind  - ребенок
@@ -47,6 +47,7 @@ zusammen - вместе
 vorstellen - представлять, знакомить 
 kennenlernen - узнавать, знакомиться
 kennen - знать, быть знакомым
+treffen - встретиться
 verbringen - проводить (время)
 bleiben - оставаться
 verlassen - покидать

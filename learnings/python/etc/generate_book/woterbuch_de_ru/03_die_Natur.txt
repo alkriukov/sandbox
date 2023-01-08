@@ -43,28 +43,30 @@ der Baum - дерево
 das Gras - трава
 die Blume - цветок
 das Blatt - лист
-
+die Palme - пальма
 
 
 das Tier - животное
 
-die Katze - кошка
-der Hund - собака
-der Vogel - птица
-das Eichhörnchen - белка
-der Wolf - волк
-die Gans - гусь
-die Giraffe - жираф
-das Kaninchen - кролик
-der Hase - заяц
-die Kuh - корова
-die Ratte - крыса
-der Fuchs - лиса
-das Pferd - лошадь
-der Frosch - лягушка
 der Bär - медведь
-die Maus - мышь
-der Affe - обезьяна
-das Schwein - свинья
+der Wolf - волк
+der Fuchs - лиса
+der Hase - заяц
 der Elefant - слон
+der Vogel - птица
+der Schwan - лебедьs
+der Affe - обезьяна
+der Frosch - лягушка
+der Hund - собака
+die Katze - кошка
+die Maus - мышь
+die Ratte - крыса
+die Gans - гусь
+die Eule - сова
+die Giraffe - жираф
+die Kuh - корова
 die Ente - утка
+das Kaninchen - кролик
+das Pferd - лошадь
+das Eichhörnchen - белка
+das Schwein - свинья
