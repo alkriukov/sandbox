@@ -26,10 +26,7 @@ der Schornstein  - дымовая труба
 der Müll - мусор
 die Abfälle - отходы
 
-
-
 die Möbel - мебель
-
 der Tisch - стол
 der Stuhl - стул
 der Sessel - кресло
@@ -44,10 +41,7 @@ die Mikrowelle - микроволновка
 der Ofen - печь, духовка
 der Herd - кухонная плита
 
-
-
 das Geschirr - посуда
-
 die Tasse - чашка
 das Glas - стакан; стекло
 der Becher - кружка
@@ -64,4 +58,4 @@ das Messer - нож
 scharf - острый
 stumpf - тупой (нож)
 
-
+gehören (+dativ) - принадлежать (кому-то)

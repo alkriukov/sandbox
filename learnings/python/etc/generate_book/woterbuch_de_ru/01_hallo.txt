@@ -9,4 +9,5 @@ Tschüss! - Пока!
 Auf Wiedersehen! - До свидания!
 
 höflich - вежливый
+nett - милый
 grob - грубый
