@@ -4,8 +4,8 @@ using namespace std;
 
 int main()
 {
-    string flag = "flag{sfli23i23fpfo2}";
-    string correct_pass = "hello_password";
+    string flag = "flag{never_keep_secrets_in_code}";
+    string correct_pass = "I_Feel_Lucky_Today";
     string attempt_pass;
     cout << "Enter password" << endl;
     cin >> attempt_pass;
