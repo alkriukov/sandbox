@@ -1,0 +1,46 @@
+Users can create own user groups, add others (depending on groups and other users settings)
+By detault, all users have own name='Contacts'
+Regular users can have only simple group type. App administrators can create other group types e.g. Domain
+
+    GROUP.POST(session_token, name)
+        if valid SESSION_TOKEN:
+            identify user_id
+            add new GROUP with name owner=user_id and creates default settings
+
+    GROUP.GET(session_token, id=)
+        if valid SESSION_TOKEN:
+            identify user_id
+            if group id specified
+                if user owns or belongs to the group:
+                    return group name type owner
+            else:
+                get groups owned by user
+                get groups where user is a member
+                return their ids and names
+
+    GROUP.PUT(session_token, id, new_name, new_owner)
+        if valid SESSION_TOKEN:
+            identify user_id
+            if user owns this group OR group_settings allow members control:
+                assign new name and/or owner to the group
+            
+    GROUP.DELETE(session_token, id)
+        if valid SESSION_TOKEN:
+            identify user_id
+            if user owns this group OR group_settings allow members control:
+                delete the group
+
+    GROUP_MEMBER.POST / DELETE (session_token, group_id, user_id)
+        if valid SESSION_TOKEN:
+            identify acting user_id
+            if acting user owns this group OR group_settings allow members control:
+                if user_id is not in the group yet and allows to be added / if user is in the group:
+                    add user_id to group_id / delete user_id from group
+
+    GROUP_MEMBER.GET(session_token, group_id)
+        if valid SESSION_TOKEN:
+            identify acting user_id
+            if acting user owns this group OR group_settings allow members control:
+                return all user_ids
+
+* We're not digging into group settings yet. So far group is just a group, and settings are just settings

@@ -1,0 +1,17 @@
+New User Registration:
+    USER.POST(nick, password, device_info)
+        check nick in USERs
+        add new USER
+        add new DEVICE for the USER
+        return TOKEN
+    Backend creates a user, registers its device, creates a session for the device
+
+User Login from new device:
+    DEVICE.POST(nick, device_info, password='', token='')
+        If (nick and password correct) OR token belongs to NICK on another device
+            add new DEVICE for USER
+                return SESSION_TOKEN
+
+* After getting SESSION_TOKEN on the device:
+    All REGULAR work (APIs) will be run with this SESSION_TOKEN (wallets, transactions, tags, schedules)
+    All ADMIN (A) operations will be run with PASSWORD (password reset, devices)

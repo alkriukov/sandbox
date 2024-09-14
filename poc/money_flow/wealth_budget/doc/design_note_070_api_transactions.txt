@@ -1,0 +1,71 @@
+Each money move (income, spending, move between wallets) is a TRANSACTION
+TRANSACTIONS can be ad-hoc - made manually by the user, or executed as SCHEUDLES
+
+A SCHEDULE is a calendar_event with transaction details.
+Value of a schedule based transaction can be absolute or in % of remaining money in the WALLET.
+    Note: % based schedules must have wallet_from_id
+
+(!) When a calendar event occurs, Absolute value SCHEDULES executed FIRST
+    Then ALL % based schedules determine absolute valued based on money remaining in FROM_WALLET
+    Then % based schedules executed with determined earlier absolute value
+
+TRANSACTION.GET(session_token, moneyflow_id, start_date, end_date=now, wallet_id=)
+    if SESSION_TOKEN valid
+        get user_id
+        if user_id has access to moneyflow_id
+            if wallet_id specified 
+                if wallet_id belongs to moneyflow_id
+                    wallet_ids_search = wallet_id
+            else
+                wallet_ids_search = ALL_WALLETS by portfolios in moneyflow_id
+            search transactions with start_date, end_date, (from_wallet or to_wallet = wallet_ids_search)
+            get TAGS associated with the transaction_ids
+            RETURN TRANSACTION and TAG objects list
+
+SCHEDULE.GET(session_token, moneyflow_id)
+     if SESSION_TOKEN valid
+        get user_id
+        if user_id has access to moneyflow_id
+            wallet_ids_search = ALL_WALLETS by portfolios in moneyflow_id
+        search schedules with (from_wallet or to_wallet = wallet_ids_search)
+        get TAGS associated with the schedule_ids
+        RETURN SCHEDULE and TAG objects list
+
+TRANSACTION.POST(session_token, datetime, value, from_wallet_id, to_wallet_id, comment)
+     if SESSION_TOKEN valid
+        get user_id
+        if from_wallet_id != None OR to_wallet_id != None
+            moneyflow_ids from from_wallet_id (if not None) and to_wallet_id (if not None)
+            if user_id has access to ALL moneyflow_ids
+                create TRANSACTION with datetime value from_wallet_id to_wallet_id comment
+                adjust WALLETS values
+                return TRANSACTION object
+
+SCHEDULE.POST(session_token, name, calendar_event, abs_or_%, value, from_wallet_id, to_wallet_id)
+     if SESSION_TOKEN valid
+        get user_id
+        if from_wallet_id != None OR to_wallet_id != None
+            moneyflow_ids from from_wallet_id (if not None) and to_wallet_id (if not None)
+            if user_id has access to ALL moneyflow_ids
+                create SCHEDULE with name calendar_event abs_or_% value from_wallet_id to_wallet_id
+                return SCHEDULE object
+
+TRANSACTIONS can't change. User modification (adjust the value etc.) makes:
+    .DELETE
+    .POST new
+    re-apply TAGS
+
+SCHEDULE.PUT(session_token, id, name calendar_event abs_or_% value new_from_wallet_id new_to_wallet_id)
+     if SESSION_TOKEN valid
+        get user_id
+        get moneyflow_ids by from_wallet_id and to_wallet_id from schedule ID
+        extend moneyflow_ids from new_from_wallet_id and new_to_wallet_id
+        if user_id has access to ALL moneyflow_ids
+            modify SCHEDULE with new name calendar_event abs_or_% value new_from_wallet_id new_to_wallet_id
+
+TRANSACTION / SCHEDULE .DELETE(session_token, id)
+     if SESSION_TOKEN valid
+        get user_id
+        get moneyflow_ids by from_wallet_id and to_wallet_id from ID
+        if user_id has access to ALL moneyflow_ids
+            delete TRANSACTION and adjust WALLETS values / delete SCHEDULE

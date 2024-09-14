@@ -1,0 +1,42 @@
+TAGS belong to Moneyflow, and have n:m relationships with TRANSACTIONS and SCHEDULES. So 3 Tables.
+
+session_token > user_id
+transaction_id/schedule_id > wallet_ids > moneyflow_ids
+
+TAG.GET(session_token, moneyflow_id):
+    if SESSION_TOKEN valid
+        get user_id
+        if user_id has access to moneyflow_id
+            return TAGS ids and names within moneyflow_id
+
+TAG.POST(session_token, name, moneyflow_id)
+    if SESSION_TOKEN valid
+        get user_id
+        if user_id has access to moneyflow_id
+            create new TAG
+            return TAG object (id and name)
+
+TAG.PUT(session_token, id, new_name)
+    if SESSION_TOKEN valid
+        get user_id
+        get moneyflow_id by tag ID
+        if user_id has access to moneyflow_id
+            set new_name
+            return TAG object
+
+TAG.DELETE(session_token, id)
+    if SESSION_TOKEN valid
+        get user_id
+        get moneyflow_id by tag ID
+        if user_id has access to moneyflow_id
+            delete TAG
+
+TRANSACTIONS_TAGS / SCHEDULES_TAGS don't have .PUT - use .DELETE & .POST
+
+TRANSACTIONS_TAGS / SCHEDULES_TAGS .POST / .DELETE (session_token, id, tag_id)
+    if SESSION_TOKEN valid
+        get user_id
+        get moneyflow_id from tag_id
+        if user_id has access to moneyflow_id
+            if from_wallet_id OR to_wallet_id belongs to moneyflow_id
+                add / remove tag_id, id record to TRANSACTIONS / SCHEDULES _TAGS (unless exists / absent)

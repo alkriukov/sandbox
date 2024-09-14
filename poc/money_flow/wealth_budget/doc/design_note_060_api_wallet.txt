@@ -1,0 +1,55 @@
+For each loaded Moneyflow, the app gets PORTFOLIOS and WALLETS
+    PORTFOLIO.GET(session_token, moneyflow_id, portfolio_id=)
+        if SESSION_TOKEN valid
+            get user_id
+            if user_id has access to moneyflow_id i.e. is owner or belongs to MONEYFLOW_GROUPS
+                get portfolio_ids by moneyflow_id
+                if portfolio_id specified
+                    if portfolio_id belongs to portfolio_ids:
+                        return PORTFOLIO name, properties
+                else
+                    return PORTFOLIOS names, properties
+
+    WALLET.GET(session_token, portfolio_id, wallet_id=)
+        if SESSION_TOKEN valid
+            get user_id
+            get moneyflow_id by portfolio_id
+            if user_id has access to moneyflow_id
+                get wallet_ids by portfolio_id
+                if wallet_id specified
+                    if wallet_id belongs to wallet_ids:
+                        return WALLET objects values
+                else
+                    return WALLETS object values
+
+    (?) PORTFOLIO.POST(session_token, portfolio_name, portfolio_properties, moneyflow_id)
+        if SESSION_TOKEN valid
+            get user_id
+            if user_id has access to moneyflow_id
+                create PORTFOLIO object
+                RETURN its id
+    ? Or crete portfolio along with wallet creation?
+
+    WALLET.POST(session_token, name, wallet_properties, portfolio_id)
+        if SESSION_TOKEN valid
+            get user_id
+            get moneyflow_id by portfolio_id
+            if user_id has access to moneyflow_id
+                create WALLET object
+                RETURN its id
+
+    PORTFOLIO or WALLET .PUT(session_token, portfolio or wallet id, new values)
+        if SESSION_TOKEN valid
+            get user_id
+            get moneyflow_id by portfolio id (portfolio_id get by wallet_id)
+            if user_id has access to moneyflow_id
+                SET new values to portfolio or wallet
+                return new values of the object
+
+    PORTFOLIO(?) or WALLET .DELETE(session_token, portfolio or wallet id)
+        if SESSION_TOKEN valid
+            get user_id
+            get moneyflow_id by portfolio id (portfolio_id get by wallet_id)
+            if user_id has access to moneyflow_id
+                DELETE portfolio or wallet object
+    ? OR delete portfolio when no wallet pointing to it

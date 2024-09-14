@@ -1,0 +1,11 @@
+APP DESIGN IS BASED ON HOW YOUR MONEY FLOW:
+All your income comes to your wallets. You can move money from one wallet to another.
+Money move can be on demand or regular: fixed value or % or remaining.
+Spendings can be usual like store or a ticket, but also can be loss in the stock market.
+-----------------------------------------------------------------------------
+|                                 --> wallet --> spendings (supermarket)    |
+|    income_0  -> ->            ---->  ^ v                                  |
+|    ...       ----> (wallet) --> --> wallet --> spendings (car service)    |
+|    income_n  -> ->            ---->  ^ v                                  |
+|                                 --> wallet --> spendings (loss)           |
+-----------------------------------------------------------------------------
