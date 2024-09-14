@@ -1,0 +1,27 @@
+DATA SCHEME:
+
+USER                nick password
+USER_SETTINGS       settings user_id
+DEVICE              device_info session_token user_id
+GROUP               name owner_user_id
+GROUP_SETTINGS      settings group_id
+GROUP_MEMBER        is_admin group_id user_id
+MONEYFLOW           name is_deleted owner_user_id
+MONEYFLOW_GROUPS    name moneyflow_id group_id
+PORTFOLIO           name properties moneyflow_id
+WALLET              name properties value goal_value start_date goal_value portfolio_id 
+TRANSACTION         datetime value from_wallet_id to_wallet_id comment
+SCHEDULE            name calendar_event abs_or_% value from_wallet_id to_wallet_id
+TAG                 name moneyflow_id
+TRANSACTIONS_TAGS   tag_id transaction_id
+SCHEDULES_TAGS      tag_id schedule_id
+
+NOTES:
+    Transactions covers incomes, spendings, moves
+    Splitted spendings exist as several transactions
+
+All data elements (USER ... DEVICE ... WALLET ... SCHEDULES_TAGS) have a subset of standard RESTful APIs:
+    GET     get object about the instance
+    POST    new object (full set of initial properties)
+    PUT     change object (full set of initial properties)
+    DELETE  delete object and all its relations

@@ -1,0 +1,42 @@
+The first thing after user logs in client searches for the moneyflows belong or shared with the user
+    MONEYFLOW.GET(session_token, id='', name='')
+        if valid SESSION_TOKEN:
+            identify user_id
+            if id specified:
+                query MONEYFLOW by id
+                if name not specified or matches:
+                    if belongs to user or shared with user via group
+                        return moneyflow id, name, is_deleted and owner's nick
+            else:
+                MONEYFLOW_IDs = MONEYFLOW(owner_user_id=user_id)
+                for each user_group_id = GROUP_MEMBER(user_id) 
+                    add moneyflow_ids = MONEYFLOW_GROUPS(group_id=user_group_id) to MONEYFLOW_IDs
+                if name is not empty:
+                    filter MONEYFLOW_IDs(name=name)
+                return MONEYFLOW_IDs, their names, is_deleted and owners' nicks
+
+When user first time logs in, (s)he sees the guide on creating own MONEYFLOW
+    MONEYFLOW.POST(session_token, name)
+        if valid SESSION_TOKEN:
+            identify user_id
+            create MONEYFLOW(name, is_deleted=False, user_id)
+            return moneyflow id, name, is_deleted and owner's nick
+
+Only owner can modify the moneyflow (incl change owner)
+    MONEYFLOW.PUT(session_token, moneyflow_id, new_name='', is_deleted=, new_owner_nick='')
+        if valid SESSION_TOKEN:
+            identify user_id
+            if new_owner_nick specified
+                new_owner_id = USER(nick)
+            if moneyflow owner_user_id == user_id:
+                update MONEYFLOW with new_name, is_deleted=is_deleted, new_owner_id if set
+
+Only owner can finally delete the moneyflow
+    MONEYFLOW.DELETE(session_token, moneyflow_id)
+        if valid SESSION_TOKEN:
+            identify user_id
+            if moneyflow owner_user_id == user_id:
+                if moneyflow is_deleted:
+                    delete MONEYFLOW
+                else:
+                    update MONEYFLOW with is_deleted=TRUE
