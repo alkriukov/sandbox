@@ -1,6 +1,6 @@
 sandbox
 =======
-This repo stores my code to exercise:
- - try coding tasks like leetcode
- - learn technologies
- - snippets & poc
+This repo stores my code to:
+ - exercise coding tasks like leetcode
+ - study technologies
+ - try snippets & make poc
