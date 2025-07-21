@@ -16,7 +16,7 @@ I __________        C __________        C __________        I _________
 |          |        ------------        ------------        |         |
 |          |                                                |         |
 |          |           C ________________________           |         |
-|          |  <------  | Operator               |  ------>  |         |
+|          |  <------  | Client                 |  ------>  |         |
 |          |           | HIGH-LEVEL-OPERATIONS  |           |         |
 ------------           --------------------------           -----------
 
@@ -24,8 +24,8 @@ EXAMPLE:
 Product is Transport which can Deliver(). Boat and Truck implement transport.
 Creator is TransportFinder, it can GetTransport(). Concrete creators are BoatFinder & TruckFinder.
 
-Operator (delivery_operator.py) can ManageDelivery(). It makes high-level business operations:
-Checks order, gets transport, executes delivery and charges the client.
+Client (client.py) can ManageDelivery(). It makes high-level business operations:
+Checks order, gets transport, executes delivery and charges the customer.
 It DOES NOT CARE on exact transport or concrete factory.
 
 main.py represents e.g. port delivery subsystem. It handles orders that need delivery by water.

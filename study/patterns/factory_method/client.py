@@ -1,7 +1,7 @@
 from transport_finder import TransportFinder
 from transport import Transport
 
-class DeliveryOperator():
+class Client():
     def __init__(self): pass
     
     def ManageDelivery(self, order, f: TransportFinder):
