@@ -1,9 +1,9 @@
 from boat_finder import BoatFinder
-from delivery_operator import DeliveryOperator
+from client import Client
 
 water_order = "Order #123"
 
 boat_factory = BoatFinder()
-operator = DeliveryOperator()
+client = Client()
 
-operator.ManageDelivery(water_order, boat_factory)
+client.ManageDelivery(water_order, boat_factory)
