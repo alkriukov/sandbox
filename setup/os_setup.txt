@@ -1,0 +1,24 @@
+# Add custom display resolution to .profile
+# cvt 2560 1600 60
+xrandr --newmode "ak_kl" 348.50  2560 2752 3032 3504  1600 1603 1609 1658 -hsync +vsync
+xrandr --addmode Virtual-1 "ak_kl"
+xrandr --output Virtual-1 --mode "ak_kl"
+
+# Shutdown VM > VM Settings in UTM > Display
+# Ensure Both upscaling and downscaling are set to LINEAR (not to nearest neighbour)
+
+# Optional: Install/update MSFT fonts
+sudo apt update
+sudo apt install ttf-mscorefonts-installer
+
+# Optional: Reset fonts cache
+rm -rf ~/snap/chromium/common/.cache/fontconfig/
+rm -rf ~/.cache/fontconfig
+fc-cache -r -v
+
+# Optional: Tune fonts in Firefox
+about:config
+Set gfx.font_rendering.cleartype_params.rendering_mode to numeric, set 5
+ 
+
+
