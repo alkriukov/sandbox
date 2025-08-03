@@ -20,5 +20,15 @@ fc-cache -r -v
 about:config
 Set gfx.font_rendering.cleartype_params.rendering_mode to numeric, set 5
  
+# Set swappiness by adding vm.swappiness=10
+# to /etc/sysctl.d/swappiness.conf under sudo
+# Test changes
+cat /etc/sysctl.d/swappiness.conf
+vm.swappiness=10
+sysctl -p /etc/sysctl.d/*
+vm.swappiness=10
+# reboot the system and check that the settings applied
+cat /proc/sys/vm/swappiness
+10
 
 
