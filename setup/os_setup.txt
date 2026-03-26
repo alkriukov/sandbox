@@ -1,30 +1,23 @@
 New VM Setup:
 
 UTM:
-
-Sharing
-    V Enable Clipboard Sharing
-
-# Shutdown VM > VM Settings in UTM > Display
-# Ensure Both upscaling and downscaling are set to "LINEAR"
-Devices
-    Display
-        X Resize display to window size automatically [UNCHECK]
-        Upscaling: Linear
-        Downscaling: Linear
-    Network
-        Network Mode: Emulated VLAN
-        Port Forwarding: Guest 22 > Host 10022
-
+    Sharing
+        V Enable Clipboard Sharing
+    # Shutdown VM > VM Settings in UTM > Display
+    # Ensure Both upscaling and downscaling are set to "LINEAR"
+    Devices
+        Display
+            Emulated display card [virtio-gpu-pci]
+            [V] Resize display to window size automatically
+                # May need to un-check if set custom resolution via xrandr
+            Upscaling: Linear
+            Downscaling: Linear
+            [V] Retina Mode
+        Network
+            Network Mode: Emulated VLAN
+            Port Forwarding: Guest 22 > Host 10022
 
 OS: 
-
-# Add custom display resolution to .profile
-# cvt 2560 1600 60
-xrandr --newmode "ak_kl" 348.50  2560 2752 3032 3504  1600 1603 1609 1658 -hsync +vsync
-xrandr --addmode Virtual-1 "ak_kl"
-xrandr --output Virtual-1 --mode "ak_kl"
-
 # Set swappiness by adding vm.swappiness=1
 # to /etc/sysctl.d/swappiness.conf under sudo
 cat /etc/sysctl.d/swappiness.conf
@@ -34,3 +27,10 @@ vm.swappiness=1
 # reboot the system and check that the settings applied
 cat /proc/sys/vm/swappiness
 1
+
+# If needed add custom display resolution to .profile
+# cvt 2560 1600 60
+# xrandr --newmode "ak_kl" 348.50  2560 2752 3032 3504  1600 1603 1609 1658 -hsync +vsync
+# xrandr --addmode Virtual-1 "ak_kl"
+# xrandr --output Virtual-1 --mode "ak_kl"
+# May cause mouse misalignment with spice tools
