@@ -1,0 +1,19 @@
+# Set Swappiness 
+cat /etc/sysctl.d/vm.swappiness.conf 
+vm.swappiness=1
+
+# Specify disk as an SSD (rotational=0)
+cat /etc/sysfs.conf
+block/vda/queue/rotational = 0
+block/vda/queue/scheduler = deadline
+cat /sys/block/vda/queue/rotational
+0
+
+# Mount host folder (read-only in UTM settings)
+cat /etc/fstab
+# UTM Shared Folder
+share /mnt/utm 9p trans=virtio,version=9p2000.L,rw,_netdev,nofail,auto 0 0
+
+# Install Docker
+https://docs.docker.com/engine/install/debian/
+https://docs.docker.com/engine/install/linux-postinstall/
