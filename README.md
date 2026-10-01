@@ -1,6 +1,6 @@
-sandbox
-=======
-This repo stores my code to:
- - exercise coding tasks like leetcode
- - study technologies
- - try snippets & make poc
+# sandbox
+
+## This repository stores snippets to
+
+- keep setup steps to reproduce further
+- try snippets and make PoCs
